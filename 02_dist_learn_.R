@@ -1,7 +1,6 @@
 # aya43@sfu.ca 20161220
 # Distance metric learning
 
-#root = "/home/maruko/alice/school/R/flowCAP-II"
 root = "~/projects/flowCAP-II"
 result_dir = "result"
 setwd(root)

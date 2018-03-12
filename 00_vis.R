@@ -1,0 +1,88 @@
+## Input: scores --> Output: tables and plots
+# aya43@sfu.ca 20170419
+
+#Directory
+root = "~/projects/flowCAP-II"
+result_dir = "result"; suppressWarnings(dir.create (result_dir))
+setwd(root)
+
+#Options
+options(stringsAsFactors=FALSE)
+# options(device="cairo")
+options(na.rm=T)
+options(include.rownames=F)
+
+#Input
+phenoMeta_dir = paste(result_dir, "/phenoMeta.Rdata", sep="") #metadata for cell populations (phenotype)
+sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="") #metadata for FCM files
+matrixCount_dir = paste(result_dir, "/matrixCount.Rdata", sep="")
+fcs_dir = paste0("0006.FCS")
+
+#Output
+plot_dir = paste(result_dir, "/plots", sep=""); for(i in 1:length(plot_dir)) { suppressWarnings(dir.create(plot_dir[i])) }
+plot_vis_dir = paste(plot_dir, "/vis.png", sep=""); for(i in 1:length(plot_dist_eval_dir)) { suppressWarnings(dir.create(plot_dist_eval_dir[i])) }
+
+#Libraries/Functions
+library(stringr)
+library(foreach)
+library(doMC)
+library(flowDensity)
+source("~/projects/IMPC/code/_funcAlice.R")
+source("~/projects/IMPC/code/_funcdist.R")
+
+#Setup Cores
+no_cores = detectCores()-1
+registerDoMC(no_cores)
+
+
+
+
+
+
+sampleMeta = get(load(sampleMeta_dir))
+phenoMeta_dir = get(load(phenoMeta_dir))
+matrixCount = get(load(matrixCount_dir))
+
+
+
+
+
+
+
+
+f = read.FCS(fcs_dir)
+dups <- duplicated(f@exprs[,2:7])
+
+
+#Tsne
+library(Rtsne)
+library(ggplot2)
+# tsne = Rtsne(as.matrix(f2@exprs[,markercols]), perplexity=1, max_iter=10000)
+# plot(tsne$Y,col=rhcl[as.numeric(factor(la))],pch=16,cex=.5)
+out_Rtsne <- Rtsne(f@exprs[!dups,1:7], pca = FALSE, verbose = TRUE)
+
+data_plot <- as.data.frame(out_Rtsne$Y)
+colnames(data_plot) <- c("tSNE_1", "tSNE_2")
+
+plot(data_plot,col=gg_color_hue(length(unique(la)))[as.numeric(factor(la))], pch=16,cex=1, main="TSNE")
+
+
+#FlowSOM
+library(FlowSOM)
+ff = ReadInput(f2,compensate = F,transform = F, scale = F)
+fSOM <- BuildSOM(ff,colsToUse=markercols)
+fSOM <- BuildMST(fSOM,tSNE=T)
+labels_pre <- fSOM$map$mapping[, 1]
+metaClustering <- metaClustering_consensus(fSOM$map$codes,k=8)
+
+res <- data.frame(cluster = metaClustering[labels_pre]) #cluster assignments
+
+PlotPies(fSOM,cellTypes=as.factor(la), backgroundValues = as.factor(metaClustering), colorPalette=grDevices::colorRampPalette(gg_color_hue(length(unique(la)))))
+
+
+
+
+
+
+
+
