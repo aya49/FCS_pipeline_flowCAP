@@ -2,16 +2,9 @@
 # creates list of children for each non-leaf node and creates children/parent list[[matrices]] (-/+ are only for phenotypes where both -,+ data exists)
 
 ## root directory
-root = "~/projects/IMPC"
+root = "~/projects/flowCAP-II"
+result_dir = "result"; dir.create( paste0(result_dir, ".Rdata"), showWarnings=F)
 setwd(root)
-
-panelL = c("P1")
-centreL = c("Sanger_SPLEEN")#,"Sanger_MLN","CIPHE","TCP","H")
-controlL = c("+_+|+_Y","+_+|+_Y","WildType","WildType","WildType") #control value in target_col column
-ci = 1; panel = panelL; centre = centreL
-
-result_dir = paste0("result/", panelL, "/", centreL); suppressWarnings(dir.create (result_dir))
-
 
 ## input directories
 meta_dir = paste0(result_dir,"/meta")
@@ -60,8 +53,6 @@ options(na.rm=T)
 create_child_entropy = T
 create_parent_entropy = T
 
-
-
 writecsv = F
 
 
@@ -101,10 +92,6 @@ childprop = foreach(i = 1:length(meta_cell_child)) %dopar% { #for each phenotype
   parent0 = parent
   parent0[which(parent<1)] = 1
   childprop = exp(children/parent0)
-  if (is.null(dim(childprop))) {
-    childprop = matrix(childprop,ncol=1)
-    colnames(childprop) = colnames(m)[unlist(meta_cell_child[[i]])]
-  }
   
   return(childprop)
 }
@@ -187,7 +174,6 @@ if (writecsv) write.csv(feat_file_cell_entropychild, file=paste0(feat_file_cell_
 
 
 
-
 TimeOutput(start1)
 
 
@@ -236,7 +222,6 @@ TimeOutput(start1)
 
 
 TimeOutput(start)
-
 
 
 

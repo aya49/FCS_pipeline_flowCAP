@@ -1,4 +1,4 @@
-## Input: scores --> Output: tables and plots
+## Input: raw cell counts --> Output: tables and plots
 # aya43@sfu.ca 20170419
 
 #Directory
@@ -13,20 +13,23 @@ options(na.rm=T)
 options(include.rownames=F)
 
 #Input
-phenoMeta_dir = paste(result_dir, "/phenoMeta.Rdata", sep="") #metadata for cell populations (phenotype)
-sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="") #metadata for FCM files
-matrixCount_dir = paste(result_dir, "/matrixCount.Rdata", sep="")
-fcs_dir = paste0("0006.FCS")
+meta_dir = paste0(result_dir,"/meta")
+meta_cell_dir = paste(meta_dir, "/cell", sep="") #metadata for cell populations (phenotype)
+meta_file_dir = paste(meta_dir, "/file", sep="") #metadata for FCM files
+feat_dir = paste(result_dir, "/feat", sep=""); dir.create(feat_dir, showWarnings=F)
+feat_file_cell_count_dir = paste(feat_dir, "/file-cell-count", sep="")
+fcs_dir = paste0("fcs/0006.FCS")
 
 #Output
-plot_dir = paste(result_dir, "/plots", sep=""); for(i in 1:length(plot_dir)) { suppressWarnings(dir.create(plot_dir[i])) }
-plot_vis_dir = paste(plot_dir, "/vis.png", sep=""); for(i in 1:length(plot_dist_eval_dir)) { suppressWarnings(dir.create(plot_dist_eval_dir[i])) }
+plot_dir = paste(result_dir, "/plots", sep=""); dir.create(plot_dir, showWarnings=F)
+plot_vis_dir = paste(plot_dir, "/vis.png", sep=""); dir.create(plot_vis_dir, showWarnings=F)
 
 #Libraries/Functions
 library(stringr)
 library(foreach)
 library(doMC)
 library(flowDensity)
+library(flowCore)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 
@@ -39,9 +42,9 @@ registerDoMC(no_cores)
 
 
 
-sampleMeta = get(load(sampleMeta_dir))
-phenoMeta_dir = get(load(phenoMeta_dir))
-matrixCount = get(load(matrixCount_dir))
+meta_file = get(load(paste0(meta_file_dir,".Rdata")))
+meta_cell_dir = get(load(paste0(meta_cell_dir,".Rdata")))
+feat_file_cell_count = get(load(paste0(feat_file_cell_count_dir,".Rdata")))
 
 
 

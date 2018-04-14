@@ -1,4 +1,4 @@
-## Input: original features --> Output: bicluster & plots
+## Input: original features --> Output: random walk features
 # aya43@sfu.ca 20161220
 
 #Directory
@@ -63,7 +63,8 @@ tube = 6 #which panel to use (flowCAP-II only); any of tubes 1-7
 
 #data paths
 #matrix_type = list.files(path=result_dir,pattern=glob2rx("matrix*.Rdata"))
-matrix_type = list(c("Pval_CountAdj","",F,T),c("PvalTRIM_CountAdj","",F,T)) #node, edge, if edge is blank, use node values on edges (of child node); edge weight should be reversed or not; should edge weights be absolute
+# can't do TRIM; no connections to root...
+matrix_type = list(c("Pval_CountAdj",F,F,T,F),c("CountAdj",F,F,T,F),c("Parent_contrib_CountAdj",T,F,F,T)) #node/edge, log or not, edge weight should be reversed or not; should edge weights be absolute, edge weight minimum at 0
 
 # matrix_type = c( "Child_entropyTRIM_CountAdjBH"              ,"Child_entropyTRIM_CountAdjbonferroni"      ,"Child_entropyTRIM_CountAdjBY"              ,"Child_entropyTRIM_CountAdjPEERBH"         
 #                  ,"Child_entropyTRIM_CountAdjPEERbonferroni"  ,"Child_entropyTRIM_CountAdjPEERBY"          ,"Child_entropyTRIM_CountAdjPEER"            ,"Child_entropyTRIM_CountAdj"               
@@ -103,11 +104,8 @@ matrix_count = c("CountAdj") #(needed if sample x cell pop matrices are used) co
 
 
 
-start = Sys.time()
 
 start1 = Sys.time()
-centre = paste0(panelL," ",centreL)
-cat("\n",centre,sep="")
 
 #Prepare data
 # matrix_type = list.files(path=paste(result_dir,  sep=""),pattern=glob2rx("matrix*.Rdata"))
@@ -121,7 +119,8 @@ cat("\n",centre,sep="")
 mc = get(load(paste0(matrix_dir, matrix_count,".Rdata")))
 sampleMeta = get(load(sampleMeta_dir))
 
-for (mcp in matrix_type) {
+#for (mcp in matrix_type) {
+  fe = foreach (mcp = matrix_type) %dopar% {
   tryCatch({
     cat("\n", mcp, " ",sep="")
     start2 = Sys.time()
@@ -131,15 +130,15 @@ for (mcp in matrix_type) {
     } else if (file.exists(paste0(matrix_dir, mcp[1],".csv"))) { m0 = read.csv(paste0(matrix_dir, mcp[1],".csv", header=T))
     } else { next } 
     
-    ## upload and prep edge matrix
-    if (mcp[2]!="") {
-      if (file.exists(paste0(matrix_dir, mcp[2],".Rdata"))) { e0 = get(load(paste0(matrix_dir, mcp[2],".Rdata")))
-      } else { next }
-    }
+    # ## upload and prep edge matrix
+    # if (mcp[2]!="") {
+    #   if (file.exists(paste0(matrix_dir, mcp[2],".Rdata"))) { e0 = get(load(paste0(matrix_dir, mcp[2],".Rdata")))
+    #   } else { next }
+    # }
     
     
     #get matrix colnames/rownames (sample/celltype features)
-    m0cn = colnames(m0)
+    m0cn = colnames(m0); if (is.null(m0cn)) m0cn = names(m0)
     m0rn = rownames(m0)
     
     #get feature layers if feature names represent cell types
@@ -155,72 +154,80 @@ for (mcp in matrix_type) {
       m = mm$m
       sm = mm$sm
       
-      if (mcp[2]!="") {
-        em = trimMatrix(e0, TRIM=grepl("TRIM",mcp[2]), mc=mc,
-                        sampleMeta=sampleMeta, sampleMeta_to_m1_col="fileName", target_col=target_col, control=str_split(control,"[|]")[[1]], order_cols=NULL, 
-                        colsplitlen=NULL, k=max(colsplitlen), countThres=countThres, goodcount=1, good_sample=1)
-        e = em$m
-        sme = em$sm
+      # if (mcp[2]!="") {
+      #   em = trimMatrix(e0, TRIM=grepl("TRIM",mcp[2]), mc=mc,
+      #                   sampleMeta=sampleMeta, sampleMeta_to_m1_col="fileName", target_col=target_col, control=str_split(control,"[|]")[[1]], order_cols=NULL, 
+      #                   colsplitlen=NULL, k=max(colsplitlen), countThres=countThres, goodcount=1, good_sample=1)
+      #   e = em$m
+      #   sme = em$sm
+      # }
+      
+      
+      #trim matrix rows by tube
+      if(tube!=0) {
+        tubeind = sm$tube==tube
+        sm = sm[tubeind,]
+        if (is.null(dim(m))) {
+          m = lapply(m, function(x) {
+            x0 = x[tubeind,]
+            if (is.null(dim(x0))) {
+              x0 = matrix(x0,ncol=1)
+              colnames(x0) = colnames(x)
+              rownames(x0) = rownames(x)[tubeind]
+            }
+            return(x0)
+          })
+        } else {
+          m = m[tubeind,]
+        }
       }
       
       #check matrix; if matrix is a list, merge; if matrix is empty, skip
       if (is.null(m)) next
-      if (all(m==0)) next
+
+      dname = paste(rw_dir, "/rw_", mcp[1], "_countThres-", countThres, sep = "")
+      if (!overwrite & file.exists(dname)) next
       
-      #trim matrix rows by tube
-      m = m[sm$tube==tube,]
-      sm = sm[sm$tube==tube,]
-      if (mcp[2]!="") {
-        tubeind = sme$tube==tube
-      e = lapply(e, function(x) {
-        x0 = x[tubeind,]
-        if (is.null(dim(x0))) {
-          x0 = matrix(x0,ncol=1)
-          colnames(x0) = colnames(x)
-          rownames(x0) = rownames(x)[tubeind]
-        }
-        return(x0)
-      })
-      sme = sme[tubeind,]
-      }
-      
-      dname = paste(rw_dir, "/", mcp[1], ifelse(mcp[2]!="","_edge-",""), mcp[2], "_", dis, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_goodSample-",good_sample, sep = "")
-      
-      
-      random_walks_all_files = foreach(i = 1:nrow(sm)) %dopar% {
+      random_walks_all_files = list()
+      for(i in 1:nrow(sm)) {
         
         #prepare nodes and edges
-        nodes0 = m[i,m[i,]!=0]
-        nodes = data.frame(cell=names(nodes0),value=nodes0)
-        if (mcp[2]!="") {
-          edges0 = lapply(names(e), function(ei) {
-            erows = lapply(1:ncol(e[[ei]]), function(jj) {
-              j = colnames(e[[ei]])[jj]
+        if (is.null(dim(m))) {
+          edges0 = lapply(names(m), function(mi) {
+            mrows = lapply(1:ncol(m[[mi]]), function(jj) {
+              j = colnames(m[[mi]])[jj]
               # if (j=="") j = "_"
-              return(c(j, ei, e[[ei]][i,jj]))
+              return(c(j, mi, m[[mi]][i,jj]))
             })
-            return(Reduce("rbind",erows))
+            return(Reduce("rbind",mrows))
           })
-          
         } else {
           require(flowType)
-          markers = unique(unlist(str_split(nodes$cell,"[+-]")))
-          phenocode = sapply(nodes$cell, function(x) encodePhenotype(x,markers[markers!=""]))
+          markers = unique(unlist(str_split(colnames(m),"[+-]")))
+          phenocode = sapply(colnames(m), function(x) encodePhenotype(x,markers[markers!=""]))
           phenolevel = unlist(lapply(phenocode, function(x){return(length(markers) - charOccurences("0", x) - 1) } ))
-          pm = data.frame(phenotype=nodes$cell, phenocode=phenocode, phenolevel=phenolevel, stringsAsFactors=F)
+          pm = data.frame(phenotype=colnames(m), phenocode=phenocode, phenolevel=phenolevel, stringsAsFactors=F)
           pmchild = getphenoChild(pm)
-          edges0 = lapply(1:length(pmchild$phenoChild), function(i) {
-            children = lapply(unlist(pmchild$phenoChild[[i]]), function(c) c(names(pmchild$phenoChild)[i], pm$phenotype[c], nodes$value[c]))
+          edges0 = lapply(1:length(pmchild$phenoChild), function(ii) {
+            children = lapply(unlist(pmchild$phenoChild[[ii]]), function(c) c(names(pmchild$phenoChild)[ii], pm$phenotype[c], m[i,c]))
             return(Reduce("rbind",children))
           })
         }
         edges = Reduce("rbind",edges0)
         edges = data.frame(from=edges[,1],to=edges[,2],weight=as.numeric(edges[,3]))
-        if (mcp[3]!="False") edges$weight = max(edges$weight) - edges$weight
-        if (mcp[4]=="100") edges$weight = abs(edges$weight)
+        if (mcp[2]!="FALSE") { 
+          a = log(abs(edges$weight))
+          negind = edges$weight<0
+          a[negind] = -a[negind]
+          a[a==-Inf] = min(a[a!=-Inf])
+          edges$weight = a
+        }
+        if (mcp[3]!="FALSE") edges$weight = max(edges$weight) - edges$weight
+        if (mcp[4]!="FALSE") edges$weight = abs(edges$weight)
+        if (mcp[5]!="FALSE") edges$weight = edges$weight - min(edges$weight)
         
-        unique_cells = intersect(c(edges$from,edges$to),nodes$cell)
-        edges = edges[edges$from%in%unique_cells & edges$to%in%unique_cells,]
+        # unique_cells = intersect(c(edges$from,edges$to),colnames(m))
+        # edges = edges[edges$from%in%unique_cells & edges$to%in%unique_cells,]
         from_layers = cell_type_layers(edges$from)
         e_order = order(from_layers)
         edges = edges[e_order,]
@@ -228,10 +235,6 @@ for (mcp in matrix_type) {
         from_layers_startind = from_layers_startind0 = sapply(0:max(from_layers), function(x) min(which(from_layers==x)))
         
         #add leaf to root node edges + duplicate edges with higher weight as random_walk() doesn't recognize weights
-        leaf_nodes = setdiff(edges$to,edges$from)
-        leaf_edges = lapply(leaf_nodes, function(x) c(x,"",max(edges$weight))) #connect all leaf nodes to root node
-        leaf_edges = Reduce("rbind",leaf_edges)
-        
         edges1 = edges
         
         q95 = quantile(edges1$weight, .95)
@@ -239,13 +242,17 @@ for (mcp in matrix_type) {
         edges1$weight[edges1$weight > 100] = 100
         edges1 = edges1[rep(1:nrow(edges1), edges1$weight), 1:2]
         
-        edges1 = data.frame(from=append(edges1[,1],leaf_edges[,1]),to=append(edges1[,2],leaf_edges[,2])) #,weight=append(as.numeric(edges[,3]),as.numeric(leaf_edges[,3])))
-        nodes = nodes[nodes$cell%in%unique_cells,]
+        leaf_nodes = setdiff(edges1$to,edges1$from)
+        leaf_edges = lapply(leaf_nodes, function(x) c(x,"")) #connect all leaf nodes to root node
+        leaf_edges = Reduce("rbind",leaf_edges)
+        
+        edges1 = as.data.frame(rbind(as.matrix(edges1),as.matrix(leaf_edges))) #,weight=append(as.numeric(edges[,3]),as.numeric(leaf_edges[,3])))
+        # nodes = nodes[nodes$cell%in%unique_cells,]
         
         #random walk
-        g = graph_from_data_frame(edges1,directed=T,vertices=nodes)
+        g = graph_from_data_frame(edges1,directed=T)
         # walks0 = random_walk(g,start="",steps=max(min_steps,nrow(edges1)*1000),mode="out")
-        walks0 = random_walk(g,start="",steps=max(min_steps,nrow(edges1)*500),mode="out")
+        walks0 = random_walk(g,start="",steps=max(min_steps,nrow(edges1)*200),mode="out")
         walks = as_ids(walks0)
         
         #tally walks on each edge by layer
@@ -260,7 +267,7 @@ for (mcp in matrix_type) {
           
           edges_temp = names(edge_tally)[startind:endind]
           wto = w0ind + to; wtodel = wto>length(walks); wto = wto[!wtodel]
-          edges_walk0 = sapply(wto,function(wtoi) paste(walks[c(wtoi-1,wtoi)],collapse="_"))
+          edges_walk0 = paste(walks[wto-1],walks[wto],sep="_")
           edges_walk = table(edges_walk0)
           order_edges_walk = match(edges_temp,names(edges_walk))
           order_edges_walk[is.na(order_edges_walk)] = length(edges_walk) + 1
@@ -271,14 +278,15 @@ for (mcp in matrix_type) {
           from_layers_startind = from_layers_startind[-1]
         }
         # x11(); plot(edge_tally, edges$weight) # random walk feature vs original feature; much like layer weighted feature
-        return(edge_tally)
+        
+        random_walks_all_files[[sm$fileName[i]]] = edge_tally
       }
       
       edge_names = Reduce('union',lapply(random_walks_all_files, function(x) names(x)))
       random_walks_all_files1 = Reduce('rbind', lapply(random_walks_all_files, function(x) {
-        x[match(edge_names, names(x))]
-        x[is.na(x)] = 0
-        return(x)
+        x0 = x[match(edge_names, names(x))]
+        x0[is.na(x0)] = 0
+        return(x0)
       }))
       rownames(random_walks_all_files1) = sm$fileName
       colnames(random_walks_all_files1) = edge_names

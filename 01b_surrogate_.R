@@ -1,35 +1,38 @@
+## Input: Normalized Count and Prop matrices --> Output: Clean out surrogate variable effects
 # aya43@sfu.ca 20161220
-# Tries to clean out surrogate variable effects from normalized cell count matrix
 
-root <- "~/projects/flowCAP-II"
-result_dir <- "result"; suppressWarnings(dir.create (result_dir))
+## root directory
+root = "~/projects/flowCAP-II"
+result_dir = "result"; suppressWarnings(dir.create (result_dir))
 setwd(root)
 
-#Input
-ft_dir <- "data/FT"
-csv_dir <- "data/AML.csv"
-phenoMeta_dir <- paste(result_dir, "/phenoMeta.Rdata", sep="")
-sampleMeta_dir <- paste(result_dir, "/sampleMeta.Rdata", sep="")
-matrixCount_dir <- paste(result_dir, "/matrixCount.Rdata", sep="")
-matrixCountAdj_dir <- paste(result_dir, "/matrixCountAdj.Rdata",sep="")
-matrixProp_dir <- paste(result_dir, "/matrixProp.Rdata", sep="")
-
-#Output
 
 
+## input directories
+meta_dir = paste0(result_dir,"/meta")
+meta_cell_dir = paste(meta_dir, "/cell.Rdata", sep="")
+meta_file_dir = paste(meta_dir, "/file.Rdata", sep="")
+feat_dir = paste(result_dir, "/feat", sep="")
+feat_file_cell_count_dir = paste(feat_dir, "/file-cell-count", sep="")
+feat_file_cell_countAdj_dir = paste(feat_dir, "/file-cell-countAdj", sep="")
+
+## output directories
+
+
+## libraries
 library(stringr)
 library(RUVSeq)
 library(edgeR)
 library(EDASeq)
 library(scater) #pData
-source("code/_funcAlice.R")
+source("~/projects/IMPC/code/_funcAlice.R")
 
 
 
 start <- Sys.time()
 
-sampleMeta <- get(load(sampleMeta_dir))
-m <- get(load(matrixCountAdj_dir))
+sampleMeta <- get(load(meta_cell_dir))
+m <- get(load(paste0(feat_file_cell_count_dir,".Rdata")))
 #phenotype on rows
 if (ncol(m)!=nrow(sampleMeta)) { m <- t(m) }
 

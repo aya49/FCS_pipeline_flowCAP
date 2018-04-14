@@ -1,29 +1,26 @@
 ## Input: original normalized count matrix --> Output: count statistic plots
 # aya43@sfu.ca 20161220
 
-#Directory
+## root directory
 root = "~/projects/flowCAP-II"
 result_dir = "result"; suppressWarnings(dir.create (result_dir))
 setwd(root)
 
-#Options
-options(stringsAsFactors=FALSE)
-# options(device="cairo")
-options(na.rm=T)
+## input directories
+feat_dir = paste(result_dir, "/feat", sep="")
 
-#Input
-matrix_dir = paste(result_dir, "/matrix", sep="")
+## output directories
+stat_dir = paste(result_dir, "/stats", sep=""); dir.create(stat_dir, showWarnings=F)
+png_dir = paste(stat_dir, "/stats_count.png", sep="")
 
-#Output
-png_dir = paste(result_dir, "/count_stats.png", sep="")
-
-#Libraries/Functions
+## libraries
+library(stringr)
 library(foreach)
 library(doMC)
 library(colorspace)
 source("~/projects/IMPC/code/_funcAlice.R")
 
-#Setup Cores
+## cores
 no_cores = detectCores()-1
 registerDoMC(no_cores)
 
@@ -37,16 +34,20 @@ registerDoMC(no_cores)
 
 
 
-#Options for script
+## options
+options(stringsAsFactors=F)
+# options(device="cairo")
+options(na.rm=T)
+
 countThres = seq(20,2000,20)
-matrix_count = c("CountAdj") #specify countmatrix to use
+feat_count = c("file-cell-countAdj") #specify countmatrix to use
 
 
 
 #Prepare data
-mm = get(load(paste0(matrix_dir, matrix_count, ".Rdata")))
+mm = get(load(paste0(feat_dir, "/", feat_count, ".Rdata")))
 markers = unlist(strsplit(colnames(mm)[which.max(nchar(colnames(mm)))],"[+-]"))
-phenolevel = getPhen(colnames(mm), phenotype=F, markers=markers)$phenoLevel
+phenolevel = str_count(colnames(mm), "[+-]")
 
 k0 = seq(1,max(phenolevel)) #layers to plot
 
@@ -62,30 +63,27 @@ k0 = seq(1,max(phenolevel)) #layers to plot
 
 start = Sys.time()
 
-start1 = Sys.time()
 
-#trim low count phenotypes
-underCountlist = foreach(c = 1:length(countThres)) %dopar% { return(which(apply(mm,2,function(x) all(x<=countThres[c])))) }
+# #trim low count phenotypes
+# underCountlist = foreach(c = 1:length(countThres)) %dopar% { return(sum(apply(mm,2,function(x) all(x<=countThres[c])))) }
+# 
+# #trim layers
+# underklist = foreach(k = 1:length(k0)) %dopar% { return(which(phenolevel<=k0[k])) }
 
-#trim layers
-underklist = foreach(k = 1:length(k0)) %dopar% { return(which(phenolevel<=k0[k])) }
-
-TimeOutput(start1)
-start1 = Sys.time()
+# TimeOutput(start)
+# start = Sys.time()
 
 ## collate data according to count and layer thresholds
 underBoth = foreach(c = 1:length(countThres)) %dopar% {
   ub = rep(0,length(k0))
   for (k in 1:length(k0)) {
-    l = length(intersect(underCountlist[[c]],underklist[[k]]))
-    if (!(length(l)>0)) l = 0
-    ub[k] = l
+    ub[k] = sum( apply(mm,2,function(x) all(x<=countThres[c])) & phenolevel<=k0[k] )
   }
   return(ub)
 }
-underBoth = do.call(rbind, underBoth)
+underBoth = Reduce("rbind", underBoth)
 
-TimeOutput(start1)
+TimeOutput(start)
 
 ## plot
 png(png_dir, width=400, height=400)

@@ -1,39 +1,37 @@
 ## Input: original count matrix --> Output: normalized count matrix
 #aya43@sfu.ca 20151228
 
-#Directory
+## root directory
 root = "~/projects/flowCAP-II"
 result_dir = "result"; suppressWarnings(dir.create (result_dir))
 setwd(root)
 
-#Options
-options(stringsAsFactors=FALSE)
-# options(device="cairo")
-options(na.rm=T)
 
-#Input
-phenoMeta_dir = paste(result_dir, "/phenoMeta.Rdata", sep="")
-sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="")
-matrixCount_dir = paste(result_dir, "/matrixCount.Rdata", sep="")
 
-#Output
-matrixCountAdj_dir = paste(result_dir, "/matrixCountAdj",sep="")
-matrixCountAdjlog_dir = paste(result_dir, "/matrixCountAdjlog",sep="")
-norm_dir = paste(result_dir, "/cellCountNormFactor",sep=""); suppressWarnings(dir.create(norm_dir))
-normFactor_dir = paste(result_dir, "/normFactor.Rdata", sep="")
-normFactorDiffLog_dir = paste(result_dir, "/normFactorDiffDensLogged.Rdata", sep="")
-norm_fdiffplot_dir = paste0(norm_dir,"/cellCountNormFactor_f_diff_from_peak_abs__tube")
+## input directories
+meta_dir = paste0(result_dir,"/meta")
+meta_cell_dir = paste(meta_dir, "/cell", sep="")
+meta_file_dir = paste(meta_dir, "/file", sep="")
+feat_dir = paste(result_dir, "/feat", sep="")
+feat_file_cell_count_dir = paste(feat_dir, "/file-cell-count", sep="")
 
-#Libraries/Functions
+## output directories
+feat_file_cell_countAdj_dir = paste(feat_dir, "/file-cell-countAdj", sep="")
+feat_file_cell_countAdjLog_dir = paste(feat_dir, "/file-cell-countAdjLog", sep="")
+norm_dir = paste(result_dir, "/cell_count_norm",sep=""); dir.create(norm_dir,showWarnings=F)
+norm_factor_dir = paste(norm_dir, "/norm_factor", sep=""); dir.create(norm_factor_dir,showWarnings=F) #plot of norm factor for each file
+norm_factor_diff_log_dir = paste(norm_dir, "/norm_factor_diff_dens_logged", sep="")
+
+## libraries
 library(stringr)
 library(pracma)
 library(foreach)
 library(doMC)
-library(flowDensity)
+# library(flowDensity)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 
-#Setup Cores
+## cores
 no_cores = detectCores()-1
 registerDoMC(no_cores)
 
@@ -47,20 +45,30 @@ registerDoMC(no_cores)
 
 
 
-#Options for script
-cutoff = c(Inf) #c(.6) #if TMM-peak>cutoff, then apply peak instead of TMM; run this script and look at norm_fdiffplot plot to determine this number
-layer = 4 #0 #calculate TMM using only phenotypes in this layer; set to 0 if do for all layers
-cellCountThres = 1200 #don't use phenotypes with cell count lower than cellCountThres
-splitby = "tube" #NULL #column to split by -- FlowCAP-II normalizes only between files of same tube/panel; set to NULL if don't split
+## options
+options(stringsAsFactors=FALSE)
+# options(device="cairo")
+options(na.rm=T)
+
+writecsv = T
+
+id_col = "fileName"
 target_col = "aml" #column with control/experiment
 control = "normal" #control value in target_col column
+
+split_col = "tube" #AML ONLY #column to split by -- FlowCAP-II normalizes only between files of same tube/panel; set to NULL if don't split
+
+cutoff = c(Inf) #c(.6) #if TMM-peak>cutoff, then apply peak instead of TMM; run this script and look at norm_fdiffplot plot to determine this number
+layer_norm = 4 #0 #calculate TMM using only phenotypes in this layer; set to 0 if do for all layers
+cellCountThres = 1200 #don't use phenotypes with cell count lower than cellCountThres
+
 
 
 
 #Prepare data
-sampleMeta0 = get(load(sampleMeta_dir))
-phenoMeta = get(load(phenoMeta_dir))
-matrixCount0 = get(load(matrixCount_dir))
+meta_file0 = get(load(paste0(meta_file_dir,".Rdata")))
+meta_cell = get(load(paste0(meta_cell_dir,".Rdata")))
+feat_file_cell_count0 = get(load(paste0(feat_file_cell_count_dir,".Rdata")))
 
 
 
@@ -74,57 +82,63 @@ matrixCount0 = get(load(matrixCount_dir))
 start = Sys.time()
 
 #calculate TMM
-fdiff0 = f0 = rep(0,nrow(sampleMeta0))
+fdiff0 = f0 = rep(0,nrow(meta_file0))
+split_unique = NULL; if (!is.null(split_col)) split_unique = unique(meta_file0[,split_col])
 
-for (ti in ifelse(is.null(splitby), NULL, unique(sampleMeta0[,splitby]))) {
+for (ti in split_unique) {
   start1 = Sys.time()
   
   #split by ti
-  tubeind = ifelse(is.null(ti), rep(T,nrow(sampleMeta0)), sampleMeta0[,splitby]==ti)
-  matrixCount = matrixCount0[tubeind,]
-  sampleMeta = sampleMeta0[tubeind,]
+  tube_ind = rep(T,nrow(meta_file0)); if(!is.null(ti)) tube_ind = meta_file0[,split_col]==ti
+  feat_file_cell_count = feat_file_cell_count0[tube_ind,]
+  meta_file = meta_file0[tube_ind,]
   
-  #prepare matrixCounts
-  x = x0 = as.matrix(matrixCount)[,-1] #take out total cell count
-  if (layer>0) x = as.matrix(x0[,colnames(x0)%in%phenoMeta$phenotype[phenoMeta$phenolevel==layer] & sapply(1:ncol(x0), function(y) any(x0[,y]>cellCountThres))])
-  lib.size = matrixCount[,1]
-  refColumn = which.min(abs( lib.size-median(lib.size[grep(control,sampleMeta[,target_col])]) )) #reference column: median total count out of all control files
+  #prepare feat_file_cell_counts
+  x = x0 = as.matrix(feat_file_cell_count)[,-1] #take out total cell count
+  if (layer_norm>0) x = as.matrix(x0[,colnames(x0)%in%meta_cell$phenotype[meta_cell$phenolevel==layer_norm] & sapply(1:ncol(x0), function(y) any(x0[,y]>cellCountThres))])
+  lib.size = feat_file_cell_count[,1]
+  refColumn = which.min(abs( lib.size - median(lib.size[grepl(control,meta_file[,target_col])]) )) #reference column: median total count out of all control files
   
   #prepare plot paths/titles
   loop.ind = 1:nrow(x)
-  pngnames = sapply(loop.ind, function(i) paste0(norm_dir, "/cellCountNormFactor_",str_pad(i, 4, pad = "0"), "_",sampleMeta[i,target_col], "_", sampleMeta$fileName[i], ".png")) 
-  mains = sapply(loop.ind, function(i) paste0("mean count vs. ln fold change:\n", sampleMeta[i,target_col]," over refColumn ", sampleMeta[refColumn,target_col], "___layer-",layer))
+  pngnames = sapply(loop.ind, function(i) {
+    pngname = paste0(norm_factor_dir,"/")
+    if (!is.null(ti)) pngname = paste0(pngname,split_col,"-",ti,"_")
+    pngname = paste0(pngname, meta_file[i,target_col], "_", meta_file[i,id_col],".png")
+  })
+  mains = sapply(loop.ind, function(i) paste0("mean count vs. ln fold change:\n", meta_file[i,target_col]," over refColumn ", meta_file[refColumn,target_col], "___layer-",layer_norm))
   
   ## calculate absolute count TMM, mostly taken from TMM
   fresult = tmm(x,x0,lib.size,refColumn,cutoff=Inf,plotimg=T,pngnames=pngnames,mains=mains,no_cores=no_cores,samplesOnCol=F)
-  f0[tubeind] = fresult$f
-  fdiff0[tubeind] = fresult$fdiff
+  f0[tube_ind] = fresult$f
+  fdiff0[tube_ind] = fresult$fdiff
   
   #plot difference between TMM and peak for all files
-  pngname = ifelse(is.null(ti), paste0(norm_fdiffplot_dir,".png"), paste0(norm_fdiffplot_dir,"-",ti,".png"))
+  pngname = ifelse(is.null(ti), paste0(norm_factor_dir,"/all.png"), paste0(norm_factor_dir,"/all_",split_col,"-",ti,".png"))
   png(file=pngname , width=700, height=700)
-  plot(sort(abs(fdiff0[tubeind])), cex=.4, ylim=c(0,3))
-  lines(sort(abs(fdiff0[tubeind])), col="blue")
+  plot(sort(abs(fdiff0[tube_ind])), cex=.4, ylim=c(0,3), main="cell-count-norm-factor_f_diff_from_peak_abs")
+  lines(sort(abs(fdiff0[tube_ind])), col="blue")
   graphics.off()
   
   TimeOutput(start1)
 }
 
-matrixCountAdj = sapply(c(1:nrow(matrixCount0)), function(x) {matrixCount0[x,]*f0[x]})
-matrixCountAdj = t(matrixCountAdj)
-colnames(matrixCountAdj) = colnames(matrixCount0)
-rownames(matrixCountAdj) = rownames(matrixCount0)
+feat_file_cell_countAdj = sapply(c(1:nrow(feat_file_cell_count0)), function(x) {feat_file_cell_count0[x,]*f0[x]})
+feat_file_cell_countAdj = t(feat_file_cell_countAdj)
+colnames(feat_file_cell_countAdj) = colnames(feat_file_cell_count0)
+rownames(feat_file_cell_countAdj) = rownames(feat_file_cell_count0)
+
 #phenotype on cols
-matrixCountAdjlog = log(matrixCountAdj)
-matrixCountAdjlog[which(matrixCountAdjlog<0)] = 0
+feat_file_cell_countAdjlog = log(feat_file_cell_countAdj)
+feat_file_cell_countAdjlog[which(feat_file_cell_countAdjlog<0)] = 0
 
 #save
-save(f0, file=normFactor_dir)
-save(fdiff0, file=normFactorDiffLog_dir)
-save(matrixCountAdj, file=paste0(matrixCountAdj_dir,".Rdata"))
-write.csv(matrixCountAdj, file=paste0(matrixCountAdj_dir,".csv"), row.names=F)
-save(matrixCountAdjlog, file=paste0(matrixCountAdjlog_dir,".Rdata"))
-write.csv(matrixCountAdjlog, file=paste0(matrixCountAdjlog_dir,".csv"), row.names=F)
+save(f0, file=paste0(norm_factor_dir,".Rdata"))
+save(fdiff0, file=paste0(norm_factor_diff_log_dir,".Rdata"))
+save(feat_file_cell_countAdj, file=paste0(feat_file_cell_countAdj_dir,".Rdata"))
+if (writecsv) write.csv(feat_file_cell_countAdj, file=paste0(feat_file_cell_countAdj_dir,".csv"), row.names=F)
+save(feat_file_cell_countAdjlog, file=paste0(norm_factor_diff_log_dir,".Rdata"))
+if (writecsv) write.csv(feat_file_cell_countAdjlog, file=paste0(norm_factor_diff_log_dir,".csv"), row.names=F)
 
 TimeOutput(start)
 

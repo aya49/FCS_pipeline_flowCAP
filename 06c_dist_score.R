@@ -17,6 +17,7 @@ phenoMeta_dir = paste(result_dir, "/phenoMeta.Rdata", sep="") #metadata for cell
 sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="") #metadata for FCM files
 # sampleMetaTrain_dir = paste0("attachments/AMLTraining.csv") #which FCM files are testing/training files
 matrix_dir = paste(result_dir, "/matrix", sep="") #feature matrices
+rw_dir = paste(result_dir,  "/rw", sep="")
 dist_dir = paste(result_dir, "/dist", sep="")
 plot_dir = paste(result_dir, "/plots", sep=""); for(i in 1:length(plot_dir)) { suppressWarnings(dir.create(plot_dir[i])) }
 plot_dist_dir = paste(plot_dir, "/dist", sep=""); for(i in 1:length(plot_dist_dir)) { suppressWarnings(dir.create(plot_dist_dir[i])) }
@@ -88,7 +89,7 @@ cltypes0 = c("distmatrix", "spec1","knn","kmed","hc","lv") #for plot and table m
 cltypespar0 = list(distmatrix="none", knn=c(1), kmed="none", lv=c(.1), spec="none", spec1="none", hc=c("ward.D2"), rw1=c(.05)) #for plot and table making
 writeMeta = c("feature","featend","layer","dist") #meta data to include in tables
 
-matrix_type_features = c("CountAdj","Prop","LogFold","Pval","Child_entropy","Parent_entropy","Child_prop","Child_pnratio","Parent_contrib","Parent_effort","Freqp0.5")
+matrix_type_features = c("CountAdj","Prop","LogFold","Pval","rw_Pval","rw_CountAdj","Child_entropy","Parent_entropy","Child_prop","Child_pnratio","Parent_contrib","Parent_effort","Freqp0.5")
 ignoredist = ".csv|simmatrix"
 
 dis = c("euclidean", "maximum", "manhattan", "canberra", "binary", "bray", "kulczynski", "minkowski", "morisita", "horn", "binomial", "rbf","poly","vanilla","tanh","laplace","bessel","anova","spline")
@@ -208,11 +209,19 @@ rn01 = rn = cbind(distMeta1[match(rn0[,1],fileNames(distMeta1$path)),],rn0[,-1])
 
 #collate scores into a table (NA for missing)
 metricnames = Reduce('union',lapply(scores, function(x) names(x)))
-score0 = foreach(ii=1:length(scores), .combine='rbind') %dopar% {
+# score0 = foreach(sc=scores, .combine='rbind') %dopar% {
+#   a = rep(NA,length(metricnames))
+#   a[match(names(sc),metricnames)] = sc
+#   return(a)
+# }
+score0 = list()
+for(sc in scores) {
   a = rep(NA,length(metricnames))
-  a[match(names(scores[[ii]]),metricnames)] = scores[[ii]]
-  return(a)
+  a[match(names(sc),metricnames)] = sc
+  score0[[length(score0)+1]] = a
 }
+score0 = Reduce("rbind",score0)
+# score00 = Reduce("rbind",score0[grepl("rw_",rn01$path)])
 rownames(score0) = rn[,1]
 colnames(score0) = metricnames
 
@@ -226,7 +235,7 @@ for (cltype in score1$cltype) {
 }
 
 save(score1,file=paste0(dist_score_all_dir,".Rdata"))
-#write.csv(score1,file=paste0(dist_score_all_dir,".csv"))
+write.csv(score1,file=paste0(dist_score_all_dir,".csv"))
 
 TimeOutput(start)
 
