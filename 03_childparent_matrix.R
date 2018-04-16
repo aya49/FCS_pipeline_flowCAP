@@ -2,15 +2,9 @@
 # creates list of children for each non-leaf node and creates children/parent list[[matrices]] (-/+ are only for phenotypes where both -,+ data exists)
 
 ## root directory
-root = "~/projects/IMPC"
+root = "~/projects/flowCAP-II"
+result_dir = "result"; suppressWarnings(dir.create (result_dir))
 setwd(root)
-
-panelL = c("P1")
-centreL = c("Sanger_SPLEEN")#,"Sanger_MLN","CIPHE","TCP","H")
-controlL = c("+_+|+_Y","+_+|+_Y","WildType","WildType","WildType") #control value in target_col column
-ci = 1; panel = panelL; centre = centreL
-
-result_dir = paste0("result/", panelL, "/", centreL); suppressWarnings(dir.create (result_dir))
 
 
 ## input directories
@@ -46,7 +40,7 @@ source("code/_funcAlice.R")
 
 
 ## cores
-no_cores = detectCores() - 1
+no_cores = 3#detectCores() - 1
 registerDoMC(no_cores)
 
 
@@ -94,7 +88,7 @@ cat("; childprop")
 childprop = foreach(i = 1:length(meta_cell_child)) %dopar% { #for each phenotype
   #for (i in 1:length(meta_cell_child)) {
   parent = m[,meta_cell_child_ind[i]]
-
+  
   # Child proportion matrix
   children = m[,unlist(meta_cell_child[[i]])]
   children[which(children<1)] = 1
@@ -167,7 +161,7 @@ mlist = foreach(i = 1:length(meta_cell_childpn)) %dopar% { #for each phenotype
   return(list(entropy=en, pnratio=pnratio)) #ratio = +child_prop / -child_prop
 }
 
-  
+
 pnratio = lapply(mlist, function(x) x$pnratio)
 en = lapply(mlist, function(x) x$en)
 

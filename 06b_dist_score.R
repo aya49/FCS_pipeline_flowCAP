@@ -52,7 +52,7 @@ source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 
 #Setup Cores
-no_cores = detectCores()-1
+no_cores = 3#detectCores()-1
 registerDoMC(no_cores)
 
 
