@@ -56,7 +56,7 @@ create_parent_entropy = T
 
 
 
-writecsv = F
+writecsv = T
 
 
 
@@ -176,7 +176,7 @@ pnratio = Reduce("cbind",pnratio)
 
 save(pnratio, file=paste0(feat_file_edge_pnratio_dir, ".Rdata"))
 save(feat_file_cell_entropychild, file=paste0(feat_file_cell_entropychild_dir, ".Rdata"))
-if (writecsv) write.csv(Reduce('cbind',pnratio), file=paste0(feat_file_edge_pnratio_dir, ".csv"))
+if (writecsv) write.csv(pnratio, file=paste0(feat_file_edge_pnratio_dir, ".csv"))
 if (writecsv) write.csv(feat_file_cell_entropychild, file=paste0(feat_file_cell_entropychild_dir, ".csv"))
 
 
@@ -199,7 +199,7 @@ meta_cell_parentpn = get(load(paste0(meta_cell_parentpn_dir, ".Rdata")))
 meta_cell_parentpn_ind = get(load(paste0(meta_cell_parentpn_ind_dir, ".Rdata")))
 
 
-feat_file_cell_entropyparent = foreach(i = 1:length(cell_parentpn), .combine='cbind') %dopar% { #for each phenotype
+feat_file_cell_entropyparent = foreach(i = 1:length(meta_cell_parentpn), .combine='cbind') %dopar% { #for each phenotype
   # Entropy matrix
   en = rep(0,nrow(m))
   

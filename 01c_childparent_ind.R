@@ -15,8 +15,10 @@ meta_cell_dir = paste(meta_dir, "/cell", sep="")
 ## output directories
 meta_cell_child_dir = paste(meta_dir, "/cell_child",sep="") #specifies a phenotypes children
 meta_cell_child_ind_dir = paste(meta_dir, "/cell_child_ind",sep="")
+meta_cell_child_names_dir = paste(meta_dir, "/cell_child_names",sep="")
 meta_cell_childpn_dir = paste(meta_dir, "/cell_childpn",sep="") #specifies a phenotypes children and splits them into +/- (only for when both -/+ exists)
 meta_cell_childpn_ind_dir = paste(meta_dir, "/cell_childpn_ind",sep="")
+meta_cell_childpn_names_dir = paste(meta_dir, "/cell_childpn_names",sep="")
 meta_cell_parent_dir = paste(meta_dir, "/cell_parent",sep="") #specifies a phenotypes parents
 meta_cell_parent_ind_dir = paste(meta_dir, "/cell_parent_ind",sep="")
 meta_cell_parentpn_dir = paste(meta_dir, "/cell_parentpn",sep="") #specifies a phenotypes parents and splits them into +/- (only for when both -/+ exists)
@@ -68,14 +70,18 @@ pc = getphenoChild(meta_cell, no_cores=no_cores)
 
 meta_cell_child = pc$phenoChild
 meta_cell_child_ind = pc$phenoChild_ind
+meta_cell_child_names = pc$phenoChild_names
 meta_cell_childpn = pc$phenoChildpn
 meta_cell_childpn_ind = pc$phenoChildpn_ind
+meta_cell_childpn_names = pc$phenoChildpn_names
 
 #save
 save(meta_cell_child, file=paste0(meta_cell_child_dir, ".Rdata"))
 save(meta_cell_child_ind, file=paste0(meta_cell_child_ind_dir, ".Rdata"))
+save(meta_cell_child_names, file=paste0(meta_cell_child_names_dir, ".Rdata"))
 save(meta_cell_childpn, file=paste0(meta_cell_childpn_dir, ".Rdata"))
 save(meta_cell_childpn_ind, file=paste0(meta_cell_childpn_ind_dir, ".Rdata"))
+save(meta_cell_childpn_names, file=paste0(meta_cell_childpn_names_dir, ".Rdata"))
 
 TimeOutput(start1)
 

@@ -133,8 +133,10 @@ meta_file <- meta_file[rowIndex,]
 #save
 save(meta_cell, file=paste0(meta_cell_dir,".Rdata")); write.csv(meta_cell, file=paste0(meta_cell_dir,".csv"), row.names=F)
 save(meta_file, file=paste0(meta_file_dir,".Rdata")); write.csv(meta_file, file=paste0(meta_file_dir,".csv"), row.names=F)
-save(feat_file_cell_count, file=paste0(feat_file_cell_count_dir,".Rdata")); write.csv(feat_file_cell_count, file=paste0(feat_file_cell_count_dir,".csv"), row.names=F)
-save(feat_file_cell_prop, file=paste0(feat_file_cell_prop_dir,".Rdata")); write.csv(feat_file_cell_prop, file=paste0(feat_file_cell_prop_dir,".csv"), row.names=F)
+save(feat_file_cell_count, file=paste0(feat_file_cell_count_dir,".Rdata"))
+write.csv(feat_file_cell_count, file=paste0(feat_file_cell_count_dir,".csv"), row.names=T)
+save(feat_file_cell_prop, file=paste0(feat_file_cell_prop_dir,".Rdata"))
+write.csv(feat_file_cell_prop, file=paste0(feat_file_cell_prop_dir,".csv"), row.names=T)
 
 TimeOutput(start)
 
