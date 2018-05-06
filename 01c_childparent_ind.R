@@ -20,9 +20,10 @@ meta_cell_childpn_dir = paste(meta_dir, "/cell_childpn",sep="") #specifies a phe
 meta_cell_childpn_ind_dir = paste(meta_dir, "/cell_childpn_ind",sep="")
 meta_cell_childpn_names_dir = paste(meta_dir, "/cell_childpn_names",sep="")
 meta_cell_parent_dir = paste(meta_dir, "/cell_parent",sep="") #specifies a phenotypes parents
+meta_cell_parent_names_dir = paste(meta_dir, "/cell_parent_names",sep="") #specifies a phenotypes parents
 meta_cell_parent_ind_dir = paste(meta_dir, "/cell_parent_ind",sep="")
-meta_cell_parentpn_dir = paste(meta_dir, "/cell_parentpn",sep="") #specifies a phenotypes parents and splits them into +/- (only for when both -/+ exists)
-meta_cell_parentpn_ind_dir = paste(meta_dir, "/cell_parentpn_ind",sep="")
+# meta_cell_parentpn_dir = paste(meta_dir, "/cell_parentpn",sep="") #specifies a phenotypes parents and splits them into +/- (only for when both -/+ exists)
+# meta_cell_parentpn_ind_dir = paste(meta_dir, "/cell_parentpn_ind",sep="")
 
 ## libraries
 library(foreach)
@@ -95,18 +96,16 @@ TimeOutput(start1)
 start1 = Sys.time()
 
 cat("\ncreating parents indices ")
-pp = getphenoParent(meta_cell, meta_cell_childpn, meta_cell_childpn_ind, no_cores)
+pp = getphenoParent(meta_cell, no_cores)
 
 meta_cell_parent = pp$phenoParent
+meta_cell_parent_names = pp$phenoParent_names
 meta_cell_parent_ind = pp$phenoParent_ind
-meta_cell_parentpn = pp$phenoParentpn
-meta_cell_parentpn_ind = pp$phenoParentpn_ind
 
 #save
 save(meta_cell_parent, file=paste0(meta_cell_parent_dir, ".Rdata"))
+save(meta_cell_parent_names, file=paste0(meta_cell_parent_names_dir, ".Rdata"))
 save(meta_cell_parent_ind, file=paste0(meta_cell_parent_ind_dir, ".Rdata"))
-save(meta_cell_parentpn, file=paste0(meta_cell_parentpn_dir, ".Rdata")) 
-save(meta_cell_parentpn_ind, file=paste0(meta_cell_parentpn_ind_dir, ".Rdata"))
 
 TimeOutput(start1)
 
