@@ -129,7 +129,8 @@ a = foreach(feat_type=feat_types) %dopar% {
     ## does feature matrix have cell populations on column names?
     layers = 0
     countThres = 0
-    colhascell = ifelse(str_split(feat_type,"-")[[1]][2]=="cell",T,F)
+    colhaslayer = ifelse(!grepl("_layer",feat_type),T,F)
+    colhascell = ifelse(str_split(feat_type,"-")[[1]][2]=="cell" & colhaslayer,T,F)
     if (colhascell) {
       layers = c(1,2,4,max(unique(sapply(unlist(str_split(colnames(m0),"_")[[1]]), function(x) str_count(x,"[+-]")))))
       countThres = cellCountThres
@@ -165,7 +166,13 @@ a = foreach(feat_type=feat_types) %dopar% {
           if (bcmethod=="BB-binary" & !grepl("pval[A-z]*TRIM",feat_type)) next
           
           # where to save biclustering
-          bcname0 = paste("/",bcmethod, "_", feat_type, "_splitby-",split_col,".", tube, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, sep = "")
+          if (colhaslayer) {
+            bcname0 = paste("/",feat_type, 
+                            "_dist-NA_clust-", bcmethod, "_splitby-",split_col,".", tube, sep = "")
+          } else {
+            bcname0 = paste("/",feat_type, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres,
+                            "_dist-NA_clust-", bcmethod, "_splitby-",split_col,".", tube, sep = "")
+          }
           bcname = paste0(biclust_source_dir, bcname0)
           
           # bicluster

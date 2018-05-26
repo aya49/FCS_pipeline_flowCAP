@@ -82,7 +82,7 @@ feat_paths = list.files(feat_dir, full.names=T, pattern=".Rdata")
 feat_paths = feat_paths[!grepl("TRIM|FULL",feat_paths)]
 feat_paths = feat_paths[!grepl(notrimmatrix,feat_paths)]
 
-for (feat_path in feat_paths) {
+a = foreach (feat_path = feat_paths) %dopar% {
   feat_m0 = get(load(feat_path))
   feat_mcol0 = sapply(str_split(colnames(feat_m0),"_"), function(x) x[length(x)])
   for (pvalTRIM_name in names(pvalTRIMs)) {

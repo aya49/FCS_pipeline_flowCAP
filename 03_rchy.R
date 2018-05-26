@@ -12,12 +12,13 @@ options(stringsAsFactors=FALSE)
 options(na.rm=T)
 
 #Input
-phenoMeta_dir = paste(result_dir, "/phenoMeta.Rdata", sep="")
-sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="")
-matrix_dir = paste(result_dir, "/matrix", sep="")
+meta_dir = paste0(result_dir,"/meta") # meta files directory
+meta_file_dir = paste(meta_dir, "/file", sep="") #meta for rows (sample)
+meta_cell_dir = paste(meta_dir, "/cell", sep="") #meta for rows (sample)
+feat_dir = paste(result_dir, "/feat", sep="") #feature files directory
 
 #Output
-rchy_dir = paste(result_dir, "/rchy", sep="")
+rchy_dir = paste(result_dir, "/rchy", sep=""); dir.create(rchy_dir, showWarnings=F)
 
 
 #Libraries/Functions
@@ -40,26 +41,51 @@ registerDoMC(no_cores)
 
 
 #Options for script
+overwrite = T #overwrite biclust?
+# writecsv = F
+
+good_count = 3 #trim matrix; only keep col/rows that meet criteria for more than 3 elements
+good_sample = 3 #trim matrix; only keep rows that are a part of a class with more than 3 samples
+
+k0 = c(4)#1,4,max(meta_cell$phenolevel)) # how many markers to consider i.e. k=max(phenolevel) only
 cellCountThres = c(1200) #insignificant if count under
+
+target_col = "aml" #the interested column in meta_file
+control = "normal" #control value in target_col column
+id_col = "fileName" #the column in meta_file matching rownames in feature matrices
+order_cols = NULL #if matrix rows should be ordered by a certain column
+split_col = "tube" # if certain rows in matrices should be analyzed in isolation, split matrix by this column in meta_file
 
 kpaths = 5
 
-matrix_count = c("CountAdj")
-matrix_TRIM = c("matrixPvalTRIM_CountAdj.Rdata") #matrix with 0s for insignificant nodes
-matrix_rchy = c("matrixPval_CountAdj.Rdata") #matrix as input into rchy
+# caluclating score; weigh different factors
+score_layer = .2
+score_count = .2
+score_score = .6 #of feat_score
+score_discretize = F #discretize score e.g. p value
 
-weight_matrix = c("MaxCountAdj_CountAdj") #assume by cell pop
+notrimmatrix = "Max"
 
-matrix_type = c("PvalTRIM_CountAdj")
-matrix_all_type = c("Pval_CountAdj")
-matrix_edge_type = c("Parent_contrib_CountAdj") #plot only
+feat_count = c("file-cell-countAdj")
+feat_score = c("file-cell-pval.file-cell-countAdj") #matrix with 0s for insignificant nodes
+feat_value = c("file-cell-pval.file-cell-countAdj") #matrix as input into rchy
+
+feat_weight = c("file-cell-countAdjMax.file-cell-countAdj") #assume by cell pop
+
+# matrix_type = c("file-cell-countAdj.pval.file-cell-countAdj.TRIM")
+# matrix_all_type = c("file-cell-pval.file-cell-countAdj")
+# matrix_edge_type = c("Parent_contrib_CountAdj") #plot only
+
+feat_types = list.files(path=feat_dir,pattern=".Rdata")
+feat_types = feat_types[!grepl("TRIM|FULL",feat_types) & !grepl(notrimmatrix,feat_types)]
+feat_types = gsub(".Rdata","",feat_types)
 
 
 #Prepare data
-m0 = get(load(paste0(matrix_dir, matrix_count,".Rdata")))
-phenoMeta = get(load(phenoMeta_dir))
+mc = get(load(paste0(feat_dir,"/", feat_count,".Rdata")))
+meta_cell = get(load(paste0(meta_cell_dir,".Rdata")))
+meta_file0 = get(load(paste0(meta_file_dir,".Rdata")))
 
-k0 = c(4)#1,4,max(phenoMeta$phenolevel)) # how many markers to consider i.e. k=max(phenolevel) only
 
 
 
@@ -73,24 +99,25 @@ k0 = c(4)#1,4,max(phenoMeta$phenolevel)) # how many markers to consider i.e. k=m
 
 start = Sys.time()
 
-for (mti in 1:length(matrix_type)) {
+for (feat_type in feat_types) {
   tryCatch({
-    mcp = matrix_type[mti]
-    map = matrix_all_type[mti]
-    mep = matrix_edge_type[mti]
-    cat("\n", mcp, " ",sep="")
-    start2 = Sys.time()
-    
-    #start a list of phenotypes included in each distance matrix calculation such that none are repeated
-    leavePhenotype = list()
-    doneAll = F
+    # map = matrix_all_type[feat_type]
+    # mep = matrix_edge_type[feat_type]
+    # cat("\n", feat_type, " ",sep="")
+    # start2 = Sys.time()
+    # 
+    # #start a list of phenotypes included in each distance matrix calculation such that none are repeated
+    # leavePhenotype = list()
+    # doneAll = F
     
     #load feature matrix
-    mresult = Loadintermatrices(c(paste0(matrix_dir, mcp,".Rdata"),paste0(matrix_dir, map,".Rdata"),paste0(matrix_dir, mcp,".Rdata")))
-    mml0 = mresult$mml
-    mmlname = names(mml0)
-    pt = mpi = mresult$pt
-    gt = mresult$gt
+    m0 = as.matrix(get(load(paste0(feat_dir,"/", feat_type,".Rdata"))))
+    ms0 = as.matrix(get(load(paste0(feat_dir,"/", feat_score,".Rdata"))))
+    # mresult = Loadintermatrices(c(paste0(matrix_dir, feat_type,".Rdata"),paste0(matrix_dir, map,".Rdata"),paste0(matrix_dir, feat_type,".Rdata")))
+    # mml0 = mresult$mml
+    # mmlname = names(mml0)
+    # pt = mpi = mresult$pt
+    # gt = mresult$gt
     
     #get to-delete low count phenotype indices; CountAdj should be first one
     for (countThres in cellCountThres) { cat("\ncountThres: ",countThres," >",sep="")
@@ -98,44 +125,55 @@ for (mti in 1:length(matrix_type)) {
       #get to-delete high no of marker phenotypes
       for (k in k0) { cat(" level",k," ",sep="")
         
-        #trim feature matrix
-        mmlresult = trimMatrices(mml0,m0,pt,gt,phenoMeta,leavePhenotype,doneAll, countThres,k)
-        if (is.null(mmlresult)) return(NULL)
-        m = mmlresult$mml[[1]]
-        ma = mmlresult$mml[[2]]
-        e = mmlresult$mml[[3]]
-        pm = mmlresult$pm
-        leavePhenotype = mmlresult$leavePhenotype
-        doneAll = mmlresult$doneAll
+        #trim / order feature & score matrix
+        mm = trimMatrix(m0,TRIM=T, mc=mc, sampleMeta=meta_file0, sampleMeta_to_m1_col=id_col, target_col=target_col, control=control, order_cols=order_cols, colsplitlen=NULL, k=k, countThres=countThres, goodcount=good_count, good_sample=good_sample)
+        if (is.null(mm)) next
+        m = mm$m
+        meta_file = mm$sm
+        if (all(meta_file[,target_col]==meta_file[1,target_col])) next
         
-        if (is.null(m)) return(NULL)
-        if (is.null(dim(m))) {
-          a = Reduce('cbind',m); if (all(a==0)) next
-        } else { if (all(m==0)) next }
+        msm = trimMatrix(ms0,TRIM=T, mc=mc, sampleMeta=meta_file0, sampleMeta_to_m1_col=id_col, target_col=target_col, control=control, order_cols=order_cols, colsplitlen=NULL, k=k, countThres=countThres, goodcount=good_count, good_sample=good_sample)
+        if (is.null(mm)) next
+        ms = msm$m
+        metas_file = msm$sm
+        if (all(metas_file[,target_col]==metas_file[1,target_col])) next
         
-        fname = paste0(rchy_dir,"/dir_k=",kpaths,"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres); suppressWarnings(dir.create(fname))
-        fname0 = paste0(rchy_dir,"/all_k=",kpaths,"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres); suppressWarnings(dir.create(fname0))
+        colorder = sort(intersect(colnames(m),colnames(ms)))
+        roworder = sort(intersect(rownames(m),rownames(ms)))
+        m = m[roworder,match(colorder,colnames(m))]
+        ms = ms[roworder,match(colorder,colnames(ms))]
+        meta_file = meta_file[roworder,]
+        metas_file = metas_file[roworder,]
+        
+        phenocodes = meta_cell$phenocode[match(colnames(m),meta_cell$phenotype)]
+        
+        fname = paste0(feat_dir,"/",feat_type,".RCHY.dir.k",str_pad(kpaths, 2, pad = "0"),"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres)
+        fname0 = paste0(feat_dir,"/",feat_type,".RCHY.all.k",str_pad(kpaths, 2, pad = "0"),"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres)
         
         a = foreach(ii=1:nrow(m)) %dopar% {
-          i = rownames(m)[ii]
-          phenocodes = phenoMeta$phenocode[match(colnames(ma),phenoMeta$phenotype)]
+          sample = rownames(m)[ii]
+          sample_feat = m[ii,]
+          sample_score = ms[ii,]
           
-          
-          # either change pvalues
+          # get cell names that either change +/- in pvalues
           rchy0 = NULL
-          if (sum(m[ii,]!=0)>0) {
-            phenoscore = abs(ma[i,])
-            startpheno = phenoMeta$phenocode[match(colnames(m)[m[ii,]!=0],phenoMeta$phenotype)]
-            startpheno = setdiff(startpheno,paste0(rep(0,nchar(phenoMeta$phenocode[1]))))
-            rchy0 = lapply(startpheno, function(sp) {
-              rr = RchyOptimyx(pheno.codes=phenocodes, phenotypeScores=phenoscore, startPhenotype=sp, pathCount=kpaths, trimPaths=F)
-              rr@nodes[2,] = ma[ii,match(rr@nodes[1,],phenoMeta$phenocode[match(colnames(ma),phenoMeta$phenotype)])]
-              rownames(rr@nodes) = c("phenocode",matrix_type[mti],"colour")
-              return(rr)
-            })
-            names(rchy0) = startpheno
-            # rchy = rchy1[[1]]; if (length(rchy1)>1) for (ri in 2:length(rchy1)) { rchy = merge(rchy,rchy1[[ri]]) }
-          }
+          if (! sum(sample_feat!=0) > good_count) next
+          score = abs(sample_score)
+          
+          startpheno = meta_cell$phenocode[match(names(sample_feat)[sample_feat!=0], meta_cell$phenotype)]
+          startpheno = setdiff(startpheno, paste0(rep(0,nchar(meta_cell$phenocode[1]))))
+          
+          ### TRIM STARTPHENO!!!!
+          
+          rchy0 = lapply(startpheno, function(sp) {
+            rr = RchyOptimyx(pheno.codes=phenocodes, phenotypeScores=sample_score, startPhenotype=sp, pathCount=kpaths, trimPaths=F)
+            rr@nodes[2,] = sample_score[match(rr@nodes[1,], phenocodes)]
+            rownames(rr@nodes) = c("phenocode",feat_score,"colour")
+            return(rr)
+          })
+          names(rchy0) = startpheno
+          # rchy = rchy1[[1]]; if (length(rchy1)>1) for (ri in 2:length(rchy1)) { rchy = merge(rchy,rchy1[[ri]]) }
+          
           
           rchy0_m = NULL
           if (!is.null(rchy0)) {
@@ -155,12 +193,12 @@ for (mti in 1:length(matrix_type)) {
           if (sum(m[ii,]>0)>0) {
             phenoscore = ma[ii,]
             if (min(phenoscore)<0) { phenoscore = phenoscore+min(-ma[ii,]);  }
-            startpheno = phenoMeta$phenocode[match(colnames(m)[m[i,]>0],phenoMeta$phenotype)]
-            startpheno = setdiff(startpheno,paste0(rep(0,nchar(phenoMeta$phenocode[1]))))
+            startpheno = meta_cell$phenocode[match(colnames(m)[m[i,]>0],meta_cell$phenotype)]
+            startpheno = setdiff(startpheno,paste0(rep(0,nchar(meta_cell$phenocode[1]))))
             rchy1 = lapply(startpheno, function(sp) {
               rr = RchyOptimyx(pheno.codes=phenocodes, phenotypeScores=phenoscore, startPhenotype=sp, pathCount=kpaths, trimPaths=F)
-              rr@nodes[2,] = ma[ii,match(rr@nodes[1,],phenoMeta$phenocode[match(colnames(ma),phenoMeta$phenotype)])]
-              rownames(rr@nodes) = c("phenocode",matrix_type[mti],"colour")
+              rr@nodes[2,] = ma[ii,match(rr@nodes[1,],meta_cell$phenocode[match(colnames(ma),meta_cell$phenotype)])]
+              rownames(rr@nodes) = c("phenocode",matrix_type[feat_type],"colour")
               return(rr)
             })
             names(rchy1) = startpheno
@@ -171,12 +209,12 @@ for (mti in 1:length(matrix_type)) {
           if (sum(m[ii,]<0)>0) {
             phenoscore = -ma[ii,]
             if (min(phenoscore)<0) phenoscore = phenoscore+min(-ma[ii,])
-            startpheno = phenoMeta$phenocode[match(colnames(m)[m[i,]<0],phenoMeta$phenotype)]
-            startpheno = setdiff(startpheno,paste0(rep(0,nchar(phenoMeta$phenocode[1])),collapse=""))
+            startpheno = meta_cell$phenocode[match(colnames(m)[m[i,]<0],meta_cell$phenotype)]
+            startpheno = setdiff(startpheno,paste0(rep(0,nchar(meta_cell$phenocode[1])),collapse=""))
             rchy2 = lapply(startpheno, function(sp) {
               rr = RchyOptimyx(pheno.codes=phenocodes, phenotypeScores=phenoscore, startPhenotype=sp, pathCount=kpaths, trimPaths=F)
-              rr@nodes[2,] = ma[ii,match(rr@nodes[1,],phenoMeta$phenocode[match(colnames(ma),phenoMeta$phenotype)])]
-              rownames(rr@nodes) = c("phenocode",matrix_type[mti],"colour")
+              rr@nodes[2,] = ma[ii,match(rr@nodes[1,],meta_cell$phenocode[match(colnames(ma),meta_cell$phenotype)])]
+              rownames(rr@nodes) = c("phenocode",matrix_type[feat_type],"colour")
               return(rr)
             })
             names(rchy2) = startpheno
