@@ -51,7 +51,7 @@ source("code/_funcAlice.R")
 
 
 ## cores
-no_cores = 15#detectCores() - 1
+no_cores = detectCores() - 1
 registerDoMC(no_cores)
 
 
@@ -67,7 +67,7 @@ create_parent_entropy = T
 
 
 
-writecsv = T
+writecsv = F
 
 
 
@@ -232,7 +232,7 @@ feat_file_cell_entropyparent = foreach(i = 1:length(meta_cell_parent_ind), .comb
   childr = m[,mpind]
   
   pnames = meta_cell_parent_names[[i]]
-  parent = m[,pnames]
+  parent = m[,colnames(m)%in%pnames]
   if (length(pnames)==1) parent = matrix(parent,ncol=1)
   
   no_parent = length(pnames)
@@ -244,6 +244,7 @@ feat_file_cell_entropyparent = foreach(i = 1:length(meta_cell_parent_ind), .comb
 }
 
 colnames(feat_file_cell_entropyparent) = meta_cell$phenotype[meta_cell_parent_ind]
+feat_file_cell_entropyparent = feat_file_cell_entropyparent[,!apply(feat_file_cell_entropyparent,2,function(x) all(x==0))]
 save(feat_file_cell_entropyparent, file=paste0(feat_file_cell_entropyparent_dir, ".Rdata"))
 if (writecsv) write.csv(feat_file_cell_entropyparent, file=paste0(feat_file_cell_entropyparent_dir, ".csv"))
 
@@ -315,7 +316,7 @@ effort0 = foreach(i = 1:length(meta_cell_parent)) %dopar% {
   cnames = names(meta_cell_parent)[i]
   cind = which(colnames(feat_file_cell_logfold)==cnames)
   pnames = meta_cell_parent_names[[i]]
-  effort1 = feat_file_cell_logfold[,cind] - feat_file_cell_logfold[,pnames]
+  effort1 = feat_file_cell_logfold[,cind] - feat_file_cell_logfold[,colnames(feat_file_cell_logfold)%in%pnames]
   if (length(meta_cell_parent[[i]])==1) effort1 = matrix(effort1,ncol=1)
   rownames(effort1) = rownames(feat_file_cell_logfold)
   colnames(effort1) = paste0(pnames,"_",cnames)
@@ -336,12 +337,6 @@ TimeOutput(start)
 
 
 TimeOutput(start1)
-
-
-
-TimeOutput(start)
-
-
 
 
 

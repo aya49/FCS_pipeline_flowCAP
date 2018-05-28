@@ -124,6 +124,7 @@ a = foreach(feat_type=feat_types) %dopar% {
     }
     if (!rownames(m0)[1]%in%meta_file[,id_col]) {
       cat("\nskipped: ",feat_type,", matrix rownames must match fileName column in meta_file","\n", sep="")
+      return(T)
     }
     
     ## does feature matrix have cell populations on column names?
@@ -157,7 +158,7 @@ a = foreach(feat_type=feat_types) %dopar% {
       
       for (tube in names(split_ind)) {
         m = m_ordered[split_ind[[tube]],]
-        if (!sum(m_ordered!=0)>0) next
+        if (!sum(m!=0)>0) next
         sm = meta_file_ordered_split = meta_file_ordered[split_ind[[tube]],]
         if (length(unique(sm[,target_col]))<=1) next
         
@@ -168,10 +169,10 @@ a = foreach(feat_type=feat_types) %dopar% {
           # where to save biclustering
           if (colhaslayer) {
             bcname0 = paste("/",feat_type, 
-                            "_dist-NA_clust-", bcmethod, "_splitby-",split_col,".", tube, sep = "")
+                            "_dist-NA_clust-", bcmethod, "_splitby-",split_col,".", tube, "_class-", target_col, sep = "")
           } else {
             bcname0 = paste("/",feat_type, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres,
-                            "_dist-NA_clust-", bcmethod, "_splitby-",split_col,".", tube, sep = "")
+                            "_dist-NA_clust-", bcmethod, "_splitby-",split_col,".", tube, "_class-", target_col, sep = "")
           }
           bcname = paste0(biclust_source_dir, bcname0)
           
