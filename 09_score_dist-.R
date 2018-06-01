@@ -32,24 +32,24 @@ dist_kern_dir = paste(dist_dir, "/dist_kern", sep=""); for (i in 1:length(dist_k
 dist_score_all_dir = paste0(dist_score_dir,"/dist_score_all")
 
 #Libraries/Functions
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(lubridate) #if there are date variables
-libr(FastKNN)
-libr(fpc)
-libr(cluster)
-libr(mclust)
-libr(igraph)
-libr(kernlab)
-libr(densitycut) #devtools::install_bitbucket("jerry00/densitycut_dev")
-libr(vegan)
-libr(Rtsne)
-libr(PerfMeas)
-libr(clues)
-libr(clusteval)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("lubridate") #if there are date variables
+libr("FastKNN")
+libr("fpc")
+libr("cluster")
+libr("mclust")
+libr("igraph")
+libr("kernlab")
+libr("densitycut") #devtools::install_bitbucket("jerry00/densitycut_dev")
+libr("vegan")
+libr("Rtsne")
+libr("PerfMeas")
+libr("clues")
+libr("clusteval")
 
 #Setup Cores
 no_cores = 3#detectCores()-1

@@ -16,14 +16,14 @@ meta_cell_child_names_dir = paste(meta_dir, "/cell_child_names",sep="") #specifi
 ## output directories
 
 ## libraries
-libr(igraph)
-libr(diffusr)
-libr(foreach)
-libr(doMC)
-libr(stringr)
-libr(plyr)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("igraph")
+libr("diffusr")
+libr("foreach")
+libr("doMC")
+libr("stringr")
+libr("plyr")
 
 #Setup Cores
 no_cores = detectCores()-6

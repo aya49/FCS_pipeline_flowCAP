@@ -20,15 +20,15 @@ clust_score_dir = paste(clust_dir,  "/score", sep=""); dir.create (clust_score_d
 
 
 ## libraries
-libr(biclust)
-libr(clues)
-libr(NMF)
-libr(pheatmap)
-libr(foreach)
-libr(doMC)
-libr(stringr)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("biclust")
+libr("clues")
+libr("NMF")
+libr("pheatmap")
+libr("foreach")
+libr("doMC")
+libr("stringr")
 
 #Setup Cores
 no_cores = 15#detectCores()-3

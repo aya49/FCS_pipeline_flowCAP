@@ -22,14 +22,14 @@ rchy_dir = paste(result_dir, "/rchy", sep="")
 
 
 #Libraries/Functions
-libr(stringr)
-libr(colorspace)
-libr(vegan) # libr(proxy)
-libr(foreach)
-libr(doMC)
-libr(lubridate) #if there are date variables
-libr(kernlab)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("stringr")
+libr("colorspace")
+libr("vegan") # libr(proxy)
+libr("foreach")
+libr("doMC")
+libr("lubridate") #if there are date variables
+libr("kernlab")
 
 #Setup Cores
 no_cores = detectCores()-1

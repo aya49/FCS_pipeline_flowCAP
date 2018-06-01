@@ -19,16 +19,16 @@ clust_dir = paste(result_dir, "/clust", sep=""); dir.create(clust_dir, showWarni
 clust_source_dir = paste0(clust_dir,"/source"); dir.create(clust_source_dir, showWarnings=F)
 
 ## libraries
-libr(FastKNN)
-libr(cluster)
-libr(mclust)
-libr(kernlab)
-libr(densitycut) #devtools::install_bitbucket("jerry00/densitycut_dev")
-libr(foreach)
-libr(doMC)
-libr(stringr)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("FastKNN")
+libr("cluster")
+libr("mclust")
+libr("kernlab")
+libr("densitycut") #devtools::install_bitbucket("jerry00/densitycut_dev")
+libr("foreach")
+libr("doMC")
+libr("stringr")
 
 #Setup Cores
 no_cores = 15#detectCores()-3

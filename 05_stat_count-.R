@@ -29,10 +29,10 @@ rchyNodesFile_dir = paste(stats_dir, "/rchyNodesFile", sep="") #should be max of
 rchyEdgesFileDiff_dir = paste(stats_dir, "/rchyEdgesFileDiff", sep="") #should be max of all included
 rchyNodesFileDiff_dir = paste(stats_dir, "/rchyNodesFileDiff", sep="") #should be max of all included
 
-libr(foreach)
-libr(doMC)
-libr(RchyOptimyx)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("foreach")
+libr("doMC")
+libr("RchyOptimyx")
 
 #Setup Cores
 no_cores = detectCores()-1

@@ -22,18 +22,18 @@ savefit = T # save the md reduction
 ignoredist = ".csv|simmatrix"
 
 
-libr(stringr)
-libr(colorspace)
-libr(fastcluster)
-libr(dendextend)
-libr(circlize)
-libr(Rtsne)
-libr(MASS)
-libr(RDRToolbox)
-libr(foreach)
-libr(doMC)
-libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("stringr")
+libr("colorspace")
+libr("fastcluster")
+libr("dendextend")
+libr("circlize")
+libr("Rtsne")
+libr("MASS")
+libr("RDRToolbox")
+libr("foreach")
+libr("doMC")
+libr("lubridate") #if there are date variables
 
 no_cores = detectCores() - 1
 registerDoMC(no_cores)

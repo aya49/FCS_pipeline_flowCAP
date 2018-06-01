@@ -22,12 +22,12 @@ rchy_dir = paste(result_dir, "/rchy", sep=""); dir.create(rchy_dir, showWarnings
 
 
 #Libraries/Functions
-libr(Matrix)
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(RchyOptimyx)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("Matrix")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("RchyOptimyx")
 
 #Setup Cores
 no_cores = detectCores()-1

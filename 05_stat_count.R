@@ -14,11 +14,11 @@ stat_dir = paste(result_dir, "/stats", sep=""); dir.create(stat_dir, showWarning
 png_dir = paste(stat_dir, "/stats_count.png", sep="")
 
 ## libraries
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(colorspace)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("colorspace")
 
 ## cores
 no_cores = detectCores()-1

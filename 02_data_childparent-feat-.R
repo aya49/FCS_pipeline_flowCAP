@@ -40,11 +40,11 @@ feat_file_edge_contrib_dir = paste(feat_dir, "/file-cell-contrib.",feat_count,se
 feat_file_edge_effort_dir = paste(feat_dir, "/file-cell-effort.",feat_count,sep="")
 
 ## libraries
-libr(stringr)
-libr(entropy)
-libr(foreach)
-libr(doMC)
 source("code/_funcAlice.R")
+libr("stringr")
+libr("entropy")
+libr("foreach")
+libr("doMC")
 
 
 

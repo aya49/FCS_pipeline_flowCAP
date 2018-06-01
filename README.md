@@ -23,7 +23,7 @@ Therefore this repository contains a FCM data processing pipeline used to isolat
 
 ## Running the Code
 
-**fill in the root directories in scripts before using!**
+
 The code is numbered based on dependency (e.g. 06 is depentant on 05, 04, etc.) and can be run in the following order:
 
 - [00_data.R](00_data.R) collates the FlowType and meta-data files from a user specified repository. This script should be changed according to how the user saves the FlowType files.

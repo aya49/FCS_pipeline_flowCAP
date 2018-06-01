@@ -28,11 +28,11 @@ feat_file_cell_entropychild_dir = paste(feat_dir, "/file-cell-entropychild",sep=
 feat_file_cell_entropyparent_dir = paste(feat_dir, "/file-cell-entropyparent",sep="")
 
 ## libraries
-libr(stringr)
-libr(entropy)
-libr(foreach)
-libr(doMC)
 source("code/_funcAlice.R")
+libr("stringr")
+libr("entropy")
+libr("foreach")
+libr("doMC")
 
 
 

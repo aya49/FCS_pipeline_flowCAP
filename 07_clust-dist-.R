@@ -64,16 +64,16 @@ dist_kern_dir = paste(dist_dir, "/dist_kern", sep=""); for (i in 1:length(dist_k
 
 
 
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(Rtsne)
-libr(devtools)
-libr(Biobase)
-libr(preprocessCore)
-libr(kernlab)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("Rtsne")
+libr("devtools")
+libr("Biobase")
+libr("preprocessCore")
+libr("kernlab")
 
 
 start = Sys.time()

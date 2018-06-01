@@ -27,11 +27,11 @@ feat_file_cell_prop_dir = paste(feat_dir, "/file-cell-prop", sep="")
 
 
 ## libraries
-libr(flowCore)
-libr(flowType)
-libr(foreach)
-libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("flowCore")
+libr("flowType")
+libr("foreach")
+libr("doMC")
 
 ## cores
 no_cores = detectCores()-1

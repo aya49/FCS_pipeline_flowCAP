@@ -17,13 +17,13 @@ stat_dir = paste(result_dir, "/stat", sep=""); suppressWarnings(dir.create (stat
 dist_dir = paste0(result_dir,"/dist"); suppressWarnings(dir.create (dist_dir))
 
 ## libraries
-libr(Matrix)
-libr(foreach)
-libr(doMC)
-libr(plyr)
-libr(stringr)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("Matrix")
+libr("foreach")
+libr("doMC")
+libr("plyr")
+libr("stringr")
 
 #Setup Cores
 no_cores = 14#detectCores()-6

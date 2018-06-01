@@ -20,13 +20,13 @@ matrix_dir = paste(result_dir,  "/matrix", sep="")
 rw_dir = paste(result_dir,  "/rw", sep=""); dir.create (rw_dir, showWarnings=F)
 
 #Libraries/Functions
-libr(igraph)
-libr(diffusr)
-libr(foreach)
-libr(doMC)
-libr(stringr)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("igraph")
+libr("diffusr")
+libr("foreach")
+libr("doMC")
+libr("stringr")
 
 #Setup Cores
 no_cores = 2#detectCores()-3

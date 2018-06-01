@@ -21,22 +21,22 @@ single_dir = paste(stat_dir, "/singlephen", sep=""); dir.create(single_dir, show
 
 
 ## libraries
-libr(stringr)
-libr(colorspace)
-libr(changepoint) # libr(proxy)
-libr(FKF)
-libr(fastcluster)
-libr(dendextend)
-libr(circlize)
-libr(Rtsne)
-libr(MASS)
-libr(RDRToolbox)
-libr(scater, quietly = TRUE)
-libr(foreach)
-libr(doMC)
-libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("colorspace")
+libr("changepoint") # libr(proxy)
+libr("FKF")
+libr("fastcluster")
+libr("dendextend")
+libr("circlize")
+libr("Rtsne")
+libr("MASS")
+libr("RDRToolbox")
+libr("scater")
+libr("foreach")
+libr("doMC")
+libr("lubridate") #if there are date variables
 
 
 

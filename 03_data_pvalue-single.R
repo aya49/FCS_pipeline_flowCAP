@@ -20,13 +20,13 @@ feat_file_cell_countAdjMax_dir = paste(feat_dir, "/file-cell-countAdjMax",sep=""
 feat_file_cell_countAdjKO_dir = paste(feat_dir, "/file-cell-countAdjKO",sep="")
 
 ## libraries
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(lubridate)
-libr(Matrix)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("lubridate")
+libr("Matrix")
 
 
 ## cores

@@ -17,18 +17,18 @@ clust_dir = paste(result_dir,  "/clust", sep=""); dir.create (clust_dir,showWarn
 biclust_source_dir = paste(clust_dir,  "/biclust_source", sep=""); dir.create (biclust_source_dir,showWarnings=F) # path to save biclusterings: row clusterings, row labels, column colusterings
 
 ## libraries
-libr(biclust)
-libr(NMF)
-libr(GrNMF) #libr(devtools); install_github("jstjohn/GrNMF")
-libr(fabia)
-libr(pheatmap)
-libr(foreach)
-libr(doMC)
-libr(stringr)
-libr(Matrix)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 source("~/projects/IMPC/code/_bayesianbiclustering.R")
+libr("biclust")
+libr("NMF")
+libr("GrNMF") #libr(devtools); install_github("jstjohn/GrNMF")
+libr("fabia")
+libr("pheatmap")
+libr("foreach")
+libr("doMC")
+libr("stringr")
+libr("Matrix")
 
 ## setup Cores for parallel processing (parallelized for each feature)
 no_cores = 15#detectCores()-3

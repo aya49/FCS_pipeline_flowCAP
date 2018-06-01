@@ -11,10 +11,10 @@ options(na.rm=T)
 sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="")
 dist_dir = paste(result_dir, "/dist", sep="")
 
-libr(stringr)
-libr(foreach)
-libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
 
 
 start = Sys.time()

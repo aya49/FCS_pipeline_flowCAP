@@ -65,27 +65,27 @@ interested = c("tube","aml") #sampleMeta columns to plot
 splitby = c("none","tube") #match with above
 
 
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(doSNOW)
-libr(lubridate) #if there are date variables
-libr(FastKNN)
-libr(fpc)
-libr(cluster)
-libr(mclust)
-libr(igraph)
-libr(kernlab)
-libr(densitycut) #devtools::install_bitbucket("jerry00/densitycut_dev")
-libr(vegan)
-libr(Rtsne)
-libr(fpc)
-libr(PerfMeas)
-libr(clues)
-libr(clusteval)
-libr(xtable)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("doSNOW")
+libr("lubridate") #if there are date variables
+libr("FastKNN")
+libr("fpc")
+libr("cluster")
+libr("mclust")
+libr("igraph")
+libr("kernlab")
+libr("densitycut") #devtools::install_bitbucket("jerry00/densitycut_dev")
+libr("vegan")
+libr("Rtsne")
+libr("fpc")
+libr("PerfMeas")
+libr("clues")
+libr("clusteval")
+libr("xtable")
 
 
 

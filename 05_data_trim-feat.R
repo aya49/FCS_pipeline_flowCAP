@@ -17,11 +17,11 @@ feat_dir = paste(result_dir, "/feat", sep=""); dir.create(feat_dir, showWarnings
 ## output directories
 
 ## libraries
-libr(stringr)
-libr(entropy)
-libr(foreach)
-libr(doMC)
-source("code/_funcAlice.R")
+source("~/projects/IMPC/code/_funcAlice.R")
+libr("stringr")
+libr("entropy")
+libr("foreach")
+libr("doMC")
 
 
 

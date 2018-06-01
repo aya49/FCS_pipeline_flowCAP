@@ -17,15 +17,15 @@ dist_dir = paste0(result_dir,"/dist"); suppressWarnings(dir.create (dist_dir))
 
 
 ## libraries
-libr(stringr)
-libr(colorspace)
-libr(vegan) # libr(proxy)
-libr(foreach)
-libr(doMC)
-libr(lubridate) #if there are date variables
-libr(kernlab)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("colorspace")
+libr("vegan") # libr(proxy)
+libr("foreach")
+libr("doMC")
+libr("lubridate") #if there are date variables
+libr("kernlab")
 
 
 

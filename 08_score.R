@@ -25,13 +25,13 @@ ignoredist = ".csv"
 dist_score_dir = paste(dist_dir, "/dist_score", sep=""); for (i in 1:length(dist_score_dir)) { suppressWarnings(dir.create(dist_score_dir[i])) }
 dist_score_result_dir = paste0(dist_score_dir,"/score_nac_list.Rdata")
 
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(Brobdingnag)
-libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("Brobdingnag")
+libr("lubridate") #if there are date variables
 
 interested = c("aml","specimen","tube") #sampleMeta columns to plot
 splitby = c("tube","tube","none")

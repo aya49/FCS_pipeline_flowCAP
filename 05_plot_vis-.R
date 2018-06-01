@@ -25,13 +25,13 @@ plot_dir = paste(result_dir, "/plots", sep=""); dir.create(plot_dir, showWarning
 plot_vis_dir = paste(plot_dir, "/vis.png", sep=""); dir.create(plot_vis_dir, showWarnings=F)
 
 #Libraries/Functions
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(flowDensity)
-libr(flowCore)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("flowDensity")
+libr("flowCore")
 
 #Setup Cores
 no_cores = detectCores()-1

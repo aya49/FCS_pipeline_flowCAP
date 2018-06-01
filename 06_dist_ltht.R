@@ -27,14 +27,14 @@ beta = c(.01,.1,1,2,5)
 
 #Output
 
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(igraph)
-libr(DTMCPack)
-libr(e1071)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("igraph")
+libr("DTMCPack")
+libr("e1071")
 
 
 

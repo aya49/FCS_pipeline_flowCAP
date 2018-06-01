@@ -18,15 +18,15 @@ biclust_plot_dir = paste(clust_dir,  "/biclust_plot", sep=""); dir.create (biclu
 
 
 ## libraries
-libr(biclust)
-libr(NMF)
-libr(pheatmap)
-libr(foreach)
-libr(doMC)
-libr(stringr)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 source("~/projects/IMPC/code/_bayesianbiclustering.R")
+libr("biclust")
+libr("NMF")
+libr("pheatmap")
+libr("foreach")
+libr("doMC")
+libr("stringr")
 
 #Setup Cores
 no_cores = 15#detectCores()-3

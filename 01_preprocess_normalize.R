@@ -23,13 +23,13 @@ norm_factor_dir = paste(norm_dir, "/norm_factor", sep=""); dir.create(norm_facto
 norm_factor_diff_dir = paste(norm_dir, "/norm_factor_diff", sep="")
 
 ## libraries
-libr(stringr)
-libr(pracma)
-libr(foreach)
-libr(doMC)
-# libr(flowDensity)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("pracma")
+libr("foreach")
+libr("doMC")
+# libr(flowDensity)
 
 ## cores
 no_cores = detectCores()-1

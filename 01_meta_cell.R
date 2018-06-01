@@ -26,10 +26,10 @@ meta_cell_parent_ind_dir = paste(meta_dir, "/cell_parent_ind",sep="")
 # meta_cell_parentpn_ind_dir = paste(meta_dir, "/cell_parentpn_ind",sep="")
 
 ## libraries
-libr(foreach)
-libr(doMC)
 source("~/projects/IMPC/code/_funcdist.R")
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("foreach")
+libr("doMC")
 
 ## cores
 no_cores = 8#detectCores()-1

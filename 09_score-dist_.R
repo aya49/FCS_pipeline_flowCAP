@@ -22,16 +22,16 @@ dist_score_dir = paste(dist_dir, "/dist_score", sep=""); for (i in 1:length(dist
 dist_clustercl_dir = paste(dist_score_dir, "/dist_cluster_cl", sep=""); for (i in 1:length(dist_clustercl_dir)) { suppressWarnings(dir.create(dist_clustercl_dir[i])) }
 
 #Libraries/Functions
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(FastKNN)
-libr(cluster)
-libr(mclust)
-libr(kernlab)
-libr(densitycut) #devtools::install_bitbucket("jerry00/densitycut_dev")
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("FastKNN")
+libr("cluster")
+libr("mclust")
+libr("kernlab")
+libr("densitycut") #devtools::install_bitbucket("jerry00/densitycut_dev")
 
 #Setup Cores
 no_cores = detectCores()-1

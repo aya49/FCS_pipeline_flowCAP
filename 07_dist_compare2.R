@@ -57,15 +57,15 @@ dist_comp_score_dir = paste(dist_score_dir, "/dist_compare", sep="")
 
 
 
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(Rtsne)
-libr(devtools)
-libr(Biobase)
-libr(preprocessCore)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("Rtsne")
+libr("devtools")
+libr("Biobase")
+libr("preprocessCore")
 
 
 start = Sys.time()

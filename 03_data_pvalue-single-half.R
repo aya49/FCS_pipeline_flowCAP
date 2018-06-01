@@ -30,13 +30,13 @@ matrixMaxCountAdjTRIM_dir = paste(result_dir, "/matrixMaxCountAdjTRIM",sep="")
 matrixKOCountAdj_dir = paste(result_dir, "/matrixKOCountAdj",sep="")
 
 #Libraries/Functions
-libr(Matrix)
-libr(stringr)
-libr(foreach)
-libr(doMC)
-libr(pracma)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
+libr("Matrix")
+libr("stringr")
+libr("foreach")
+libr("doMC")
+libr("pracma")
 
 #Setup Cores
 no_cores = detectCores()-1

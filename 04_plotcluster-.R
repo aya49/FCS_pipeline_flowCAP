@@ -32,14 +32,14 @@ interested = c("aml", "tube") #sampleMeta columns to plot
 plot_dir = paste(result_dir, "/plots", sep="")
 pc_dir = paste(plot_dir, "/plotcluster", sep=""); for(i in 1:length(pc_dir)) { suppressWarnings(dir.create(pc_dir[i])) }
 
-libr(stringr)
-libr(colorspace)
-libr(fpc) # libr(proxy)
-libr(foreach)
-libr(doMC)
-libr(lubridate) #if there are date variables
-libr(Matrix)
 source("~/projects/IMPC/code/_funcAlice.R")
+libr("stringr")
+libr("colorspace")
+libr("fpc") # libr(proxy)
+libr("foreach")
+libr("doMC")
+libr("lubridate") #if there are date variables
+libr("Matrix")
 
 
 no_cores = 3#detectCores()-1
