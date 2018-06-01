@@ -52,12 +52,12 @@ dist_type_dir = NULL
 # for(i in 1:length(mcp_types)) { for(j in 1:length(dist_dir)) { dist_type_dir = append(dist_type_dir, paste0(dist_dir[j], mcp_types[i]))} }
 # for (i in 1:length(dist_type_dir)) { suppressWarnings(dir.create (dist_type_dir[i])) }
 
-library(stringr)
-library(colorspace)
-library(vegan) # library(proxy)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(colorspace)
+libr(vegan) # libr(proxy)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
 
 

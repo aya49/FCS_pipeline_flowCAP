@@ -11,9 +11,9 @@ options(na.rm=T)
 sampleMeta_dir = paste(result_dir, "/sampleMeta.Rdata", sep="")
 dist_dir = paste(result_dir, "/dist", sep="")
 
-library(stringr)
-library(foreach)
-library(doMC)
+libr(stringr)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 

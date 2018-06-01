@@ -26,19 +26,19 @@ cp_dir = paste(plot_dir, "/changepoint", sep=""); for(i in 1:length(cp_dir)) { s
 single_dir = paste(plot_dir, "/singlephen", sep=""); for(i in 1:length(single_dir)) { suppressWarnings(dir.create(single_dir[i])) }
 
 
-library(stringr)
-library(colorspace)
-library(changepoint) # library(proxy)
-library(FKF)
-library(fastcluster)
-library(dendextend)
-library(circlize)
-library(Rtsne)
-library(MASS)
-library(RDRToolbox)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(colorspace)
+libr(changepoint) # libr(proxy)
+libr(FKF)
+libr(fastcluster)
+libr(dendextend)
+libr(circlize)
+libr(Rtsne)
+libr(MASS)
+libr(RDRToolbox)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 
@@ -341,7 +341,7 @@ plot()
 
 ## AMI evaluation sci.kit.learn ==FAST on python, not good on R NMI
 
-## library (fpc)
+## libr (fpc)
 
 #set.seed(4634)
 #face <- rFace(300,dMoNo=2,dNoEy=0)

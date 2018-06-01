@@ -23,20 +23,21 @@ Therefore this repository contains a FCM data processing pipeline used to isolat
 
 ## Running the Code
 
+**fill in the root directories in scripts before using!**
 The code is numbered based on dependency (e.g. 06 is depentant on 05, 04, etc.) and can be run in the following order:
 
-- [00_collateFT.R](00_collateFT.R) collates the FlowType and meta-data files from a user specified repository. This script should be changed according to how the user saves the FlowType files.
--	[01_childparent_indices.R](01_childparent_indices.R) lists out the edges in the cell hierarchy representation of an FCM (in the form of an acyclic graphical ) based on the cell populations it contains.
--	[01a_normalize.R](01a_normalize.R) **normalizes** the cell counts.
--	[02_count_stats.R](02_count_stats.R) plots statistics regarding cell counts in different files.
--	[02_pvalue_single.R](02_pvalue_single.R) creates the node-based phenodeviance FCM file **features**.
--	[02_pvalue_single_half.R](02_pvalue_single_half.R) creates the phenodeviance features for if the user wishes to use half the control files as experiment files.
--	[03_childparent_matrix.R](03_childparent_matrix.R) creates the rest of the FCM file **features**.
--	[04_checkmatrix.R](04_checkmatrix.R) checks the features made for extreme values.
--	[04_dist.R](04_dist.R) creates **distance matrices** from the features.
--	[04_dist_w.R](04_dist_w.R) creates weighted manhattan **distance matrices** from the features
--	[05_dist_lin.R](05_dist_lin.R) creates distance matrices from linear combinations of existing distance matrices.
--	[06a_dist_score.R](06a_dist_score.R) creates Gaussian kernel **distance matrices**, and clusters original features using spectral clustering and DensityCut.
--	[06b_dist_score.R](06b_dist_score.R) **clusters/classifies** distance matrices. Also **scores** and plots those clusterings/classifications.
--	[06c_dist_score.R](06c_dist_score.R) creates summary plots and tables for distances & clustering/classification scores.
+- [00_data.R](00_data.R) collates the FlowType and meta-data files from a user specified repository. This script should be changed according to how the user saves the FlowType files.
+-	[01_meta_cell.R](01_meta_cell.R) lists out the edges in the cell hierarchy representation of an FCM (in the form of an acyclic graphical ) based on the cell populations it contains.
+-	[01_preprocess_normalize.R](01_preprocess_normalize.R) **normalizes** the cell counts.
+-	[05_stat_count.R](05_stat_count.R) plots statistics on cell counts in different files.
+-	[03_data_pvalue-single.R](03_data_pvalue-single.R) creates the node-based phenodeviance FCM file **features**.
+-	[03_data_pvalue-single-half.R](03_data_pvalue-single-half.R) creates the phenodeviance features for if the user wishes to use half the control files as experiment files.
+-	[02_data_childparent-feat.R](02_data_childparent-feat.R) creates the rest of the FCM file **features**.
+-	[05_stat_checkmatrix.R](05_stat_checkmatrix.R) checks the features made for extreme values.
+-	[06_dist.R](06_dist.R) creates **distance matrices** from the features.
+-	~~[06_dist_w.R](06_dist_w.R)~~ creates weighted manhattan **distance matrices** from the features
+-	~~[06_dist_lin.R](06_dist_lin.R)~~ creates distance matrices from linear combinations of existing distance matrices.
+-	[07_biclust.R](07_biclust.R), [07_classclust-dist.R](07_classclust-dist.R), [07_classclust-feat.R](07_classclust-feat.R)  **clusters/classifies** feature/distance matrices. 
+- [08_score_clustclassbi.R](08_score_clustclassbi.R) **scores** and plots those clusterings/classifications.
+-	[08_plot_clustclass.R](08_plot_clustclass.R), [08_plot_biclust.R](08_plot_biclust.R), ~~[09_score_dist.R](09_score_dist.R)~~ creates summary plots and tables for distances & clustering/classification scores.
 

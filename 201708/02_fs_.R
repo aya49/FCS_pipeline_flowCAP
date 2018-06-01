@@ -20,17 +20,17 @@ matrixPval_names = gsub("matrix","",fileNames(matrixPval_dir, ext="Rdata"))
 #Output
 dist_dir = paste(result_dir, "/dist", sep=""); suppressWarnings(dir.create (dist_dir))
 
-library(stringr)
-library(colorspace)
-library(vegan) # library(proxy)
-library(prabclus)
-library(fastcluster)
-library(dendextend)
-library(circlize)
-library(Rtsne)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(colorspace)
+libr(vegan) # libr(proxy)
+libr(prabclus)
+libr(fastcluster)
+libr(dendextend)
+libr(circlize)
+libr(Rtsne)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("code/_funcAlice.R")
 
 
@@ -85,9 +85,9 @@ k0 = c(1,max(phenoMeta[,3])+1) # how many markers to consider i.e. k=max(phenole
 
 # ensure the results are repeatable
 set.seed(7)
-# load the library
-library(mlbench)
-library(caret)
+# load the libr
+libr(mlbench)
+libr(caret)
 # load the data
 data(PimaIndiansDiabetes)
 # calculate correlation matrix

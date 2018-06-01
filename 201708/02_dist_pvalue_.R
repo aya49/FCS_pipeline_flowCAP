@@ -21,17 +21,17 @@ matrix_type = gsub("matrix","",fileNames(matrix_type, ext="Rdata"))
 #Output
 dist_dir = paste(result_dir, "/dist", sep=""); suppressWarnings(dir.create (dist_dir))
 
-library(stringr)
-library(colorspace)
-library(vegan) # library(proxy)
-library(prabclus)
-library(fastcluster)
-library(dendextend)
-library(circlize)
-library(Rtsne)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(colorspace)
+libr(vegan) # libr(proxy)
+libr(prabclus)
+libr(fastcluster)
+libr(dendextend)
+libr(circlize)
+libr(Rtsne)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("code/_funcAlice.R")
 
 

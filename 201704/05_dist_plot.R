@@ -22,17 +22,17 @@ savefit = T # save the md reduction
 ignoredist = ".csv|simmatrix"
 
 
-library(stringr)
-library(colorspace)
-library(fastcluster)
-library(dendextend)
-library(circlize)
-library(Rtsne)
-library(MASS)
-library(RDRToolbox)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(colorspace)
+libr(fastcluster)
+libr(dendextend)
+libr(circlize)
+libr(Rtsne)
+libr(MASS)
+libr(RDRToolbox)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
 
 no_cores = 8#detectCores() - 1
@@ -217,7 +217,7 @@ TimeOutput(start)
 
 ## AMI evaluation sci.kit.learn ==FAST on python, not good on R NMI
 
-## library (fpc)
+## libr (fpc)
 
 #set.seed(4634)
 #face <- rFace(300,dMoNo=2,dNoEy=0)

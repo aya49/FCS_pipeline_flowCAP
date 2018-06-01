@@ -22,10 +22,10 @@ steps = 10000
 
 #Output
 
-library(stringr)
-library(foreach)
-library(doMC)
-library(igraph)
+libr(stringr)
+libr(foreach)
+libr(doMC)
+libr(igraph)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 

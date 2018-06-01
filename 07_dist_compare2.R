@@ -57,13 +57,13 @@ dist_comp_score_dir = paste(dist_score_dir, "/dist_compare", sep="")
 
 
 
-library(stringr)
-library(foreach)
-library(doMC)
-library(Rtsne)
-library(devtools)
-library(Biobase)
-library(preprocessCore)
+libr(stringr)
+libr(foreach)
+libr(doMC)
+libr(Rtsne)
+libr(devtools)
+libr(Biobase)
+libr(preprocessCore)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 

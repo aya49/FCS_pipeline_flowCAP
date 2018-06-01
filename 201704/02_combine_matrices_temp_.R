@@ -26,10 +26,10 @@ markers0_dir = paste(result_dir, "/", panelL, "/markers.Rdata", sep="")
 matrixAdj0_dir = paste(result_dir, "/", panelL, "/matrixCountAdj.Rdata", sep="")
 matrixAdj0_dircsv = paste(result_dir, "/", panelL, "/matrixCountAdj.csv", sep="")
 
-library(stringr)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 

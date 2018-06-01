@@ -21,26 +21,26 @@ source("Code/_funcAlice.R")
 # source("Code/load_manual_results.R") # for CIPHE
 
 #General
-# library(extremevalues)
-library(Matrix)
-library(stringr)
-# library(foreach)
+# libr(extremevalues)
+libr(Matrix)
+libr(stringr)
+# libr(foreach)
 
-library(flowCore)
+libr(flowCore)
 
 #Gating
-library(flowClean)
-library(flowDensity)
-library(flowType)
+libr(flowClean)
+libr(flowDensity)
+libr(flowType)
 
 #Analysis
-library(sva)
-library(MDR)
-library(arules)
-library(arulesViz)
-library(fitdistrplus)
-library(RchyOptimyx)
-library(igraph)
+libr(sva)
+libr(MDR)
+libr(arules)
+libr(arulesViz)
+libr(fitdistrplus)
+libr(RchyOptimyx)
+libr(igraph)
 
 
 
@@ -282,7 +282,7 @@ for (centre in centreL[c(5)]) {
   for(i in ncol(x):1) { cat(i," ",sep="")
     obs <- x[,i]
     nO <- lib.size[i]
-    logR <- log2((obs/nO)/(ref/nR))			# log ratio of expression, accounting for library size
+    logR <- log2((obs/nO)/(ref/nR))			# log ratio of expression, accounting for libr size
     absE <- (log2(obs/nO) + log2(ref/nR))/2	# absolute expression
     v <- (nO-obs)/nO/obs + (nR-ref)/nR/ref	 # estimated asymptotic variance
     
@@ -778,8 +778,8 @@ for (centre in centreL[c(1:5)]) { #CIPHE and TCP doesn't have gender
 
 
 #006.05_fitDistribution-------------------------------------------
-library(fitdistrplus)
-library(logspline)
+libr(fitdistrplus)
+libr(logspline)
 fit.weibull <- fitdist(x, "weibull")
 plot(fit.weibull)
 fit.norm <- fitdist(y, "norm")
@@ -790,7 +790,7 @@ fit.poisson <- fitdist(y, "poisson")
 #006.1_change point detection; dlm/filter---------------------------------------------
 
 # create time series object
-library(its) #irregular time seires
+libr(its) #irregular time seires
 require(zoo) ## convert to a zoo object, with order given by the `datefield`
 phenDataTS <- with(data.frame(count=phenData2$count,date=ymd_hms(phenData2$date)), zoo(count, order.by=date))
 start <- Sys.time(); phenDataTS <- as.ts(phenDataTS); TimeOutput(start) #SangerTCellSPLEEN; one Phen = 4min; 2000 to 51580803 data points
@@ -838,7 +838,7 @@ legend("top", c("Nile flow data", "Local level (StructTS)", "Local level (fkf)")
 
 
 
-library(dlm) # Bayes
+libr(dlm) # Bayes
 #constant model: time invariant (doesn't depend on time)
 buildFun <- function(x) {
   m <- dlmModPoly(1, dV = exp(x[1])) #nth order poly
@@ -959,9 +959,9 @@ require(FKF)
 
 # plotting
 
-library(ggplot2)
-library(lme4)
-library(multcomp)
+libr(ggplot2)
+libr(lme4)
+libr(multcomp)
 dataset <- expand.grid(experiment = factor(seq_len(10)), status = factor(c("N", "D", "R"), levels = c("N", "D", "R")), reps = seq_len(10))
 dataset$value <- rnorm(nrow(dataset), sd = 0.23) + with(dataset, rnorm(length(levels(experiment)), sd = 0.256)[experiment] + ifelse(status == "D", 0.205, ifelse(status == "R", 0.887, 0))) + 2.78
 model <- lmer(value~status+(1|experiment), data = dataset)
@@ -991,17 +991,17 @@ dataset <- transform(dataset,
                        X %*% c(2.78,0.205,0.887))  ## fixed effects
 
 install.packages("coefplot2",repos="http://r-forge.r-project.org")
-library(coefplot2)
+libr(coefplot2)
 coefplot2(model)
 
 #006.4_Multilevel modelling Example--------------------------------------------------
-library(merTools)
+libr(merTools)
 m1 <- lmer(y ~ service + lectage + studage + (1|d) + (1|s), data=InstEval)
 # shinyMer(m1, simData = InstEval[1:100, ]) # just try the first 100 rows of data
-library(lme4)
-library(arm)
+libr(lme4)
+libr(arm)
 
-library(nlme)
+libr(nlme)
 
 
 lmm.data <- read.table("http://researchsupport.unt.edu/class/Jon/R_SC/Module9/lmm.data.txt", header = TRUE, sep = ",", na.strings = "NA", dec = ".", strip.white = TRUE)
@@ -1076,7 +1076,7 @@ corrplot::corrplot(dendlist_cor, "pie", "lower")
 dev.off()
 
 
-library(cvxbiclustr)
+libr(cvxbiclustr)
 cobra(t(m))
 
 # X <- lung
@@ -1161,7 +1161,7 @@ for (centre in centreL[c(1:5)]) { cat("\nCentre: ",centre,sep="")
           m <- matrixCellCountAdj
           start2 <- Sys.time()
           #Dist matrix
-          require(vegan) # library(proxy)
+          require(vegan) # libr(proxy)
           if (dis[i]=="canberra2") {
             m[which(m<0)] <- 1
             try( d <- vegdist(m, method="canberra") )
@@ -1347,12 +1347,12 @@ cat("\ntotal ",TimeOutput(start)," ",sep="")
 
 
 require(RDRToolbox)
-library(rgl)
+libr(rgl)
 ## Isomap ##
 
 
 
-# library(dbscan)
+# libr(dbscan)
 # oc <- optics(d, eps=10, minPts=3) # no results (gravitate towards each other)
 
 

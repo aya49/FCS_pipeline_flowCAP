@@ -18,16 +18,16 @@ matrix_type = c("Count", "CountAdj", "Prop")
 #Output
 dist_dir = paste(result_dir, "/dist", sep=""); suppressWarnings(dir.create (dist_dir))
 
-library(stringr)
-library(colorspace)
-library(vegan) # library(proxy)
-library(fastcluster)
-library(dendextend)
-library(circlize)
-library(Rtsne)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
+libr(stringr)
+libr(colorspace)
+libr(vegan) # libr(proxy)
+libr(fastcluster)
+libr(dendextend)
+libr(circlize)
+libr(Rtsne)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
 source("code/_funcAlice.R")
 
 
@@ -237,10 +237,10 @@ TimeOutput(start)
 
 
 #require(RDRToolbox)
-#library(rgl)
+#libr(rgl)
 ## Isomap ##
 
 
 
-# library(dbscan)
+# libr(dbscan)
 # oc = optics(d, eps=10, minPts=3) # no results (gravitate towards each other)

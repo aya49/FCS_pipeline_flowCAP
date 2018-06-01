@@ -1,6 +1,6 @@
-library(Matrix)
-library(foreach)
-library(doMC)
+libr(Matrix)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 options(stringsAsFactors=FALSE)

@@ -23,8 +23,8 @@ phenoParent_ind_dir = paste(result_dir, "/phenoParent_ind",sep="")
 phenoParentpn_dir = paste(result_dir, "/phenoParentpn",sep="")
 phenoParentpn_ind_dir = paste(result_dir, "/phenoParentpn_ind",sep="")
 
-library(foreach)
-library(doMC)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 

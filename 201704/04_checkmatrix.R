@@ -23,9 +23,9 @@ matrix_type = c("Child_entropyTRIM_CountAdj", "Child_entropyTRIM_Prop", "Parent_
                 "Parent_effort_CountAdj", "Parent_effort_Prop", "Parent_contrib_CountAdj", "Parent_contrib_Prop",
                 "Child_pnratio", "Child_prop")
 
-library(Matrix)
-library(foreach)
-library(doMC)
+libr(Matrix)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 no_cores = detectCores()-1

@@ -31,9 +31,9 @@ matrixPvalFULL_dir = paste(result_dir, "/", panelL, "/", centreL, "/matrixPvalFU
 # matrixPvalAdjFULL_dir = paste(result_dir, "/matrixPvalAdjFULL",sep="")
 matrixLogRatio_dir = paste(result_dir, "/", panelL, "/", centreL, "/matrixLogRatio1",sep="")
 
-library(stringr)
-library(foreach)
-library(doMC)
+libr(stringr)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 

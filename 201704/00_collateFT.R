@@ -25,10 +25,10 @@ matrixCount_dircsv = paste(result_dir, "/matrixCount.csv", sep="")
 matrixProp_dir = paste(result_dir, "/matrixProp.Rdata", sep="")
 matrixProp_dircsv = paste(result_dir, "/matrixProp.csv", sep="")
 
-library(flowCore)
-library(flowType)
-library(foreach)
-library(doMC)
+libr(flowCore)
+libr(flowType)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 no_cores = 6#detectCores()-3

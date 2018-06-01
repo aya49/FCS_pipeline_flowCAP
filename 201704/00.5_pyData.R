@@ -27,7 +27,7 @@ matrixCountAdj_cortrim_dirpy = paste(py_dir, "/matrixCountAdj_cortrim.csv", sep=
 aml_dirpy = paste(py_dir, "/aml.csv", sep="")
 
 
-library(stringr)
+libr(stringr)
 source("code/_funcAlice.R")
 
 

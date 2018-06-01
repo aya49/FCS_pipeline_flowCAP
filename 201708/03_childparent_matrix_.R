@@ -39,12 +39,12 @@ matrixParent_effort_dir = paste(result_dir, "/matrixParent_effort",sep="")
 matrixFreqp_dir = paste(result_dir, "/matrixFreqp",conf,sep="")
 
 #Libraries/Functions
-library(Matrix)
-library(arules)
-library(stringr)
-library(entropy)
-library(foreach)
-library(doMC)
+libr(Matrix)
+libr(arules)
+libr(stringr)
+libr(entropy)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 #Setup Cores

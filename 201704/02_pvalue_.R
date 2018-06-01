@@ -28,9 +28,9 @@ matrixPvalFULL_dir = paste(result_dir, "/matrixPvalFULL",sep="")
 matrixPvalAdjFULL_dir = paste(result_dir, "/matrixPvalAdjFULL",sep="")
 
 
-library(stringr)
-library(foreach)
-library(doMC)
+libr(stringr)
+libr(foreach)
+libr(doMC)
 source("code/_funcAlice.R")
 
 

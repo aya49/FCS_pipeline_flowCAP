@@ -12,9 +12,9 @@ mcp = c("CountAdj") #countAdj comes first, to set which columns are deleted base
 #Output
 png_dir = paste(result_dir, "/count_stats.png", sep="")
 
-library(foreach)
-library(doMC)
-library(colorspace)
+libr(foreach)
+libr(doMC)
+libr(colorspace)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 no_cores = 6#detectCores() - 4

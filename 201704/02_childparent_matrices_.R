@@ -34,10 +34,10 @@ matrixChild_prop_dircsv = paste(result_dir, "/matrixChild_prop.csv",sep="")
 matrixChild_entropy_dircsv = paste(result_dir, "/matrixChild_entropy.csv",sep="")
 matrixParent_entropy_dircsv = paste(result_dir, "/matrixParent_entropy.csv",sep="")
 
-library(stringr)
-library(entropy)
-library(foreach)
-library(doMC)
+libr(stringr)
+libr(entropy)
+libr(foreach)
+libr(doMC)
 source("code/_funcAlice.R")
 
 

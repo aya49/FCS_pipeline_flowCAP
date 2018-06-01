@@ -39,16 +39,16 @@ ignoredist = ".csv"
 dist_score_dir = paste(dist_dir, "/dist_score", sep=""); for (i in 1:length(dist_score_dir)) { suppressWarnings(dir.create(dist_score_dir[i])) }
 cl_score_result_dir = paste0(dist_score_dir,"/score_cl_list")
 
-library(stringr)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
-library(fpc)
-library(cluster)
-library(Rtsne)
-library(PerfMeas)
-library(clues)
-library(mclust)
+libr(stringr)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
+libr(fpc)
+libr(cluster)
+libr(Rtsne)
+libr(PerfMeas)
+libr(clues)
+libr(mclust)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 

@@ -37,11 +37,11 @@ matrixParent_entropy_dir = paste(result_dir, "/matrixParent_entropy",sep="")
 matrixParent_contrib_dir = paste(result_dir, "/matrixParent_contrib",sep="")
 matrixParent_effort_dir = paste(result_dir, "/matrixParent_effort",sep="")
 
-library(Matrix)
-library(stringr)
-library(entropy)
-library(foreach)
-library(doMC)
+libr(Matrix)
+libr(stringr)
+libr(entropy)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 

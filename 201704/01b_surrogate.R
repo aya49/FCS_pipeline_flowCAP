@@ -17,11 +17,11 @@ matrixProp_dir <- paste(result_dir, "/matrixProp.Rdata", sep="")
 #Output
 
 
-library(stringr)
-library(RUVSeq)
-library(edgeR)
-library(EDASeq)
-library(scater) #pData
+libr(stringr)
+libr(RUVSeq)
+libr(edgeR)
+libr(EDASeq)
+libr(scater) #pData
 source("code/_funcAlice.R")
 
 
@@ -47,8 +47,8 @@ if (ncol(m)!=nrow(sampleMeta)) { m <- t(m) }
 
 
 
-library(zebrafishRNASeq)
-library(RColorBrewer)
+libr(zebrafishRNASeq)
+libr(RColorBrewer)
 data(zfGenes)
 
 ## Exploratory Analysis
@@ -107,7 +107,7 @@ plotPCA(set2, col=colors[x], cex=1.2)
 
 
 ## differential analysis
-library(DESeq2)
+libr(DESeq2)
 dds <- DESeqDataSetFromMatrix(countData=counts(set2), colData=pData(set2), design=~W_1+x)
 dds <- DESeq(dds)
 res <- results(dds)
@@ -143,17 +143,17 @@ topTags(lrt)
 
 ## Analysis of simulated data
 
-library(zebrafishRNASeq)
-library(RSkittleBrewer)
-library(genefilter)
-library(polyester)
-library(RUVSeq)
-library(edgeR)
-library(sva)
-library(ffpe)
-library(RColorBrewer)
-library(corrplot)
-library(limma)
+libr(zebrafishRNASeq)
+libr(RSkittleBrewer)
+libr(genefilter)
+libr(polyester)
+libr(RUVSeq)
+libr(edgeR)
+libr(sva)
+libr(ffpe)
+libr(RColorBrewer)
+libr(corrplot)
+libr(limma)
 trop = RSkittleBrewer('tropical')
 set.seed(3532333)
 

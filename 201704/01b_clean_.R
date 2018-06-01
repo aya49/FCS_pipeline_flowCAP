@@ -24,12 +24,12 @@ nosample = 40 #number of samples to plot >2
 countThres = 500
 dpp = c("leafonly","nonleaf")
 
-library(stringr)
-library(devtools)
-library(Biobase)
-library(preprocessCore)
-library(foreach)
-library(doMC)
+libr(stringr)
+libr(devtools)
+libr(Biobase)
+libr(preprocessCore)
+libr(foreach)
+libr(doMC)
 source("~/projects/IMPC/code/_funcAlice.R")
 
 

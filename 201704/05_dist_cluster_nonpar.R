@@ -38,12 +38,12 @@ ignoredist = ".csv"
 dist_score_dir = paste(dist_dir, "/dist_score", sep=""); for (i in 1:length(dist_score_dir)) { suppressWarnings(dir.create(dist_score_dir[i])) }
 cl_score_result_dir = paste0(dist_score_dir,"/score_clusterlv_list")
 
-library(stringr)
-library(foreach)
-library(doMC)
-library(igraph)
-library(PerfMeas)
-library(clues)
+libr(stringr)
+libr(foreach)
+libr(doMC)
+libr(igraph)
+libr(PerfMeas)
+libr(clues)
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 

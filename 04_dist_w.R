@@ -25,14 +25,14 @@ dist_dir = paste(result_dir, "/dist", sep=""); for (i in 1:length(dist_dir)) { s
 dist_type_dir = NULL
 
 #Libraries/Functions
-library(stringr)
-library(colorspace)
-library(vegan) # library(proxy)
-library(foreach)
-library(doMC)
-library(lubridate) #if there are date variables
-library(progress)
-library(pracma) #for dot product
+libr(stringr)
+libr(colorspace)
+libr(vegan) # libr(proxy)
+libr(foreach)
+libr(doMC)
+libr(lubridate) #if there are date variables
+libr(progress)
+libr(pracma) #for dot product
 source("~/projects/IMPC/code/_funcAlice.R")
 source("~/projects/IMPC/code/_funcdist.R")
 
