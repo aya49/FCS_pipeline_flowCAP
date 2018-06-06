@@ -1134,8 +1134,8 @@ for (centre in centreL[c(1:5)]) { cat("\nCentre: ",centre,sep="")
   k <- max(phenoMeta$phenoLevel)+1
   for (mcp in 1:2) {
     # load & fix matrices
-    if (mcp==1) {dname <- paste("dist/", dis, "_layer", str_pad(k, 2, pad = "0"), ".Rdata", sep = "" )
-    } else {dname <- paste("dist/", dis, "_layer", str_pad(k, 2, pad = "0"), "_prop.Rdata", sep = "" )}
+    if (mcp==1) {dname <- paste("dist/", dis, "_layer-", str_pad(k, 2, pad = "0"), ".Rdata", sep = "" )
+    } else {dname <- paste("dist/", dis, "_layer-", str_pad(k, 2, pad = "0"), "_prop.Rdata", sep = "" )}
     
     if (!all(dname%in%dir("dist/")) | dodist) {
       if (mcp==1) {matrixCellCountAdj <- get(load(paste("matrixCellCountAdj.Rdata",sep="")))
@@ -1152,8 +1152,8 @@ for (centre in centreL[c(1:5)]) { cat("\nCentre: ",centre,sep="")
       for (k in max(phenoMeta$phenoLevel)+1) {
         
         # get distance object i
-        if (mcp==1) {dname <- paste("dist/", dis[i], "_layer", str_pad(k, 2, pad = "0"), ".Rdata", sep = "" )
-        } else {dname <- paste("dist/", dis[i], "_layer", str_pad(k, 2, pad = "0"), "_prop.Rdata", sep = "" )}
+        if (mcp==1) {dname <- paste("dist/", dis[i], "_layer-", str_pad(k, 2, pad = "0"), ".Rdata", sep = "" )
+        } else {dname <- paste("dist/", dis[i], "_layer-", str_pad(k, 2, pad = "0"), "_prop.Rdata", sep = "" )}
         if (file.exists(dname) & !dodist) { cat("\nLoading Distance Object #", length(dis)-i+1, " ", dis[i]," ",sep="")
           load(dname)
         } else { cat("\nCalculating Distance Object #", length(dis)-i+1, " ", dis[i], sep="")
@@ -1188,8 +1188,8 @@ for (centre in centreL[c(1:5)]) { cat("\nCentre: ",centre,sep="")
             })
             
             numplots <- 2; if (!grepl("CIPHE",centre) & !grepl("TCP",centre)) numplots <- numplots+1
-            if (mcp==1) {pngname <- paste("dist/", dis[i], "_", link[j], "_layer", str_pad(k, 2, pad = "0"), "_hclust.png", sep = "" )
-            } else {pngname <- paste("dist/", dis[i], "_", link[j], "_layer", str_pad(k, 2, pad = "0"), "_hclust_prop.png", sep = "" )}
+            if (mcp==1) {pngname <- paste("dist/", dis[i], "_", link[j], "_layer-", str_pad(k, 2, pad = "0"), "_hclust.png", sep = "" )
+            } else {pngname <- paste("dist/", dis[i], "_", link[j], "_layer-", str_pad(k, 2, pad = "0"), "_hclust_prop.png", sep = "" )}
             png (file=pngname , width=1000*numplots, height=8000)
             par(mar=(c(5,5,5,40) + 0.1), mfrow=c(1,numplots))
             
@@ -1268,8 +1268,8 @@ for (centre in centreL[c(1:5)]) { cat("\nCentre: ",centre,sep="")
                 }
               }
               
-              if (mcp==1) {pngname <- paste("dist/", dis[i], "_layer", str_pad(k, 2, pad = "0"), "_tsne",theta,".png", sep = "" )
-              } else {pngname <- paste("dist/", dis[i], "_layer", str_pad(k, 2, pad = "0"), "_tsne",theta,"_prop.png", sep = "" )}
+              if (mcp==1) {pngname <- paste("dist/", dis[i], "_layer-", str_pad(k, 2, pad = "0"), "_tsne",theta,".png", sep = "" )
+              } else {pngname <- paste("dist/", dis[i], "_layer-", str_pad(k, 2, pad = "0"), "_tsne",theta,"_prop.png", sep = "" )}
               width <- 700; height <- 700 # of each plot in png
               perplot <- height/12
               

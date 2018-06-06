@@ -142,7 +142,7 @@ for (mt in 1:length(matrix_type)) {
           a = Reduce('cbind',m); if (all(a==0)) next
         } else { if (all(m==0)) next }
         
-        fname = paste0(rchy_dir,"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres); suppressWarnings(dir.create(fname))
+        fname = paste0(rchy_dir,"_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres); suppressWarnings(dir.create(fname))
         
         foreach(i=rownames(m)) %dopar% {
           rchy = NULL

@@ -119,7 +119,7 @@ for (mi in 1:length(matrix_type0)) {
       
       # Calculate distance (normalize by cell population) --------------------------------------------------------
       
-      dname = paste(dist_dir, "/linear_", paste0(matrix_type.,"-",matrix_weights, collapse="_"), "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
+      dname = paste(dist_dir, "/linear_", paste0(matrix_type.,"-",matrix_weights, collapse="_"), "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
       if (grepl(dname,distmfilenames) & overwrite) { cat(" exists, skipped."); next }
       
       #weigh each feature matrix; scalendev = 0 (uhh...), T (scaling is done by dividing the centred columns by their SD), F (none)

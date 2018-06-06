@@ -184,7 +184,7 @@ for (mcp in matrix_type) {
       sme = sme[tubeind,]
       }
       
-      dname = paste(rw_dir, "/", mcp[1], ifelse(mcp[2]!="","_edge-",""), mcp[2], "_", dis, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_goodSample-",good_sample, sep = "")
+      dname = paste(rw_dir, "/", mcp[1], ifelse(mcp[2]!="","_edge-",""), mcp[2], "_", dis, "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_goodSample-",good_sample, sep = "")
       
       
       random_walks_all_files = foreach(i = 1:nrow(sm)) %dopar% {

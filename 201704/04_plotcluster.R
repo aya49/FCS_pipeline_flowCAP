@@ -120,7 +120,7 @@ for (mcp in matrix_type) {
           t = as.integer(factor(sm[,coli]))
           tname = sort(unique(sm[,coli]))
           
-          title = paste0(mcp, "_", pcm, "_col-",colnames(sm)[coli],"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres,"_-_",colnames(sm)[coli])
+          title = paste0(mcp, "_", pcm, "_col-",colnames(sm)[coli],"_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres,"_-_",colnames(sm)[coli])
           pcname = paste0(pc_dir,"/plotcluster_", title, ".png")
           
           if (colnames(sm)[coli]==target_col) {

@@ -281,7 +281,7 @@ for (ci in 1:length(paste0(panelL,centreL))) {
     }
     cat("pca; ")
     pc <- prcomp(m[morder,])
-    pngname <- paste0(plot_dir[ci], "/pca_iso_", mcp, "_layer", str_pad(1, 2, pad = "0"), ".png")
+    pngname <- paste0(plot_dir[ci], "/pca_iso_", mcp, "_layer-", str_pad(1, 2, pad = "0"), ".png")
     png(filename=pngname, width=length(interestedCols)*400, height=(plotpc+1+iso)*400)
     layout(matrix(c(rep(1,length(interestedCols)), 2:((plotpc+iso)*length(interestedCols)+1)),ncol=length(interestedCols),byrow=T))
     

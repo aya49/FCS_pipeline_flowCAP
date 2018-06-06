@@ -60,7 +60,7 @@ for (mcp in matrix_type) { # Load & fix pvalue matrices
     for (k in k0) {
       start1 = Sys.time()
       
-      dname = paste(dist_dir[ci], "/distance_", mcp, "_layer", str_pad(k, 2, pad = "0"), "_", dis[i], ".Rdata", sep = "" )
+      dname = paste(dist_dir[ci], "/distance_", mcp, "_layer-", str_pad(k, 2, pad = "0"), "_", dis[i], ".Rdata", sep = "" )
       
       if (file.exists(dname) & !dodist) { cat("\nLoading Distance Object #", length(dis)-i+1, " ", dis[i]," ",sep="")
         d <- get(load(dname))
@@ -109,7 +109,7 @@ for (mcp in matrix_type) { # Load & fix pvalue matrices
             rowplot = 3
             colplot = ceiling(numplots/rowplot) # all genes + WT only, >3 samples
             
-            pngname = paste0(dist_dir[ci], "/tsne_", mcp, "_layer", str_pad(k, 2, pad = "0"), "_", dis[i], "_tsne",theta, ".png")
+            pngname = paste0(dist_dir[ci], "/tsne_", mcp, "_layer-", str_pad(k, 2, pad = "0"), "_", dis[i], "_tsne",theta, ".png")
             
             png(pngname, width=width*colplot, height=height*rowplot)
             par(mfrow=c(rowplot,colplot))

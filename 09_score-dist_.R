@@ -130,8 +130,8 @@ errorsb = foreach (mcp = loop.ind) %dopar% {
         m0 = m0[!apply(m0[,-1], 1, function(x) all(x==0)),!apply(m0[-1,], 2, function(x) all(x==0))]
         pm = mmlresult$pm
         
-        dnamee = paste(dist_dir, "/", mcp, "_rbf_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-",norm,".Rdata", sep="")
-        dnameo = paste(dist_clustercl_dir, "/", mcp, "_other_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-",norm,".Rdata", sep="")
+        dnamee = paste(dist_dir, "/", mcp, "_rbf_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-",norm,".Rdata", sep="")
+        dnameo = paste(dist_clustercl_dir, "/", mcp, "_other_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-",norm,".Rdata", sep="")
         
         sampleMeta = sampleMeta0[match(rownames(m0),sampleMeta0$fileName),]
         

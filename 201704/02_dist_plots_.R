@@ -64,7 +64,7 @@ for (mcp in matrix_type) { # Load & fix cell count/countAdj/proportion matrix; 1
     
     for (k in k0) {
       
-      dname = paste(dist_dir, "/distance_", mcp, "_layer", str_pad(k, 2, pad = "0"), "_", dis[i], ".Rdata", sep = "" )
+      dname = paste(dist_dir, "/distance_", mcp, "_layer-", str_pad(k, 2, pad = "0"), "_", dis[i], ".Rdata", sep = "" )
       
       if (file.exists(dname) & !dodist) { cat("\nLoading Distance Object #", length(dis)-i+1, " ", dis[i]," ",sep="")
         d <- get(load(dname))
@@ -107,7 +107,7 @@ for (mcp in matrix_type) { # Load & fix cell count/countAdj/proportion matrix; 1
           #plot
           numplots = length(interestedCols)
           
-          pngname = paste0(dist_dir, "/hclust_", mcp, "_layer", str_pad(k, 2, pad = "0"), "_", dis[i], "_", link[j], ".png")
+          pngname = paste0(dist_dir, "/hclust_", mcp, "_layer-", str_pad(k, 2, pad = "0"), "_", dis[i], "_", link[j], ".png")
           
           png (file=pngname , width=1000*numplots, height=8000)
           par(mar=(c(5,5,5,40) + 0.1), mfrow=c(1,numplots))
@@ -160,7 +160,7 @@ for (mcp in matrix_type) { # Load & fix cell count/countAdj/proportion matrix; 1
             rowplot = 3
             colplot = ceiling(numplots/rowplot) # all genes + WT only, >3 samples
             
-            pngname = paste0(dist_dir, "/tsne_", mcp, "_layer", str_pad(k, 2, pad = "0"), "_", dis[i], "_tsne",theta, ".png")
+            pngname = paste0(dist_dir, "/tsne_", mcp, "_layer-", str_pad(k, 2, pad = "0"), "_", dis[i], "_tsne",theta, ".png")
             
             png(pngname, width=width*colplot, height=height*rowplot)
             par(mfrow=c(rowplot,colplot))

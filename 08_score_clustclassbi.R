@@ -31,7 +31,7 @@ libr("doMC")
 libr("stringr")
 
 #Setup Cores
-no_cores = 15#detectCores()-3
+no_cores = 10#detectCores()-3
 registerDoMC(no_cores)
 
 
@@ -78,8 +78,10 @@ dist_types = list.files(dist_dir, recursive=F, full.names=F, pattern=".Rdata")
 dist_types = gsub(".Rdata","",dist_types)
 
 
-dist_paths = lapply(dist_types, function(x) {
-  return(clust_paths[grepl(paste0("/",x,"_"),clust_paths)])
+dist_paths = lapply(dist_types, function(dist_type) {
+  ca = clust_paths[grepl(paste0("/",dist_type,"_"),clust_paths)]
+  if (length(ca)>0) return(ca)
+  return("NA")
 })
 names(dist_paths) = dist_types
 clust_paths_rest = clust_paths[!clust_paths%in%unlist(dist_paths)]
@@ -106,12 +108,9 @@ if (readcsv) {
   meta_file = get(load(paste0(meta_file_dir,".Rdata")))
 }
 
-score_list = foreach(dist_type=names(dist_paths)) %dopar% {
+score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
   tryCatch ({
-    
     scores = list()
-    
-    
     
     ## upload and prep feature matrix
     d0 = NULL
@@ -121,24 +120,22 @@ score_list = foreach(dist_type=names(dist_paths)) %dopar% {
       } else {
         d0 = as.matrix(get(load(paste0(dist_dir,"/", dist_type,".Rdata"))))
       }
+    
       if (!rownames(d0)[1]%in%meta_file[,id_col]) {
         cat("\nskipped: ",dist_type,", matrix rownames must match fileName column in meta_file","\n", sep="")
-        return(T)
-      }
-      
-      
-      score = NULL
-      
-      rowlabel = meta_file[match(rownames(d0),meta_file[,id_col]),target_col]
-      names(rowlabel) = rownames(d0)
-      
-      rowlabel_df = model.matrix(~ factor(rowlabel) - 1)
-      colnames(rowlabel_df) = laname = sort(unique(rowlabel))
-      rownames(rowlabel_df) = names(rowlabel)
-      
-      
-      ## internal validation NCA (distance)
-      # if (dist_type!="NA") {
+      } else {
+        score = NULL
+        
+        rowlabel = meta_file[match(rownames(d0),meta_file[,id_col]),target_col]
+        names(rowlabel) = rownames(d0)
+        
+        rowlabel_df = model.matrix(~ factor(rowlabel) - 1)
+        colnames(rowlabel_df) = laname = sort(unique(rowlabel))
+        rownames(rowlabel_df) = names(rowlabel)
+        
+        
+        ## internal validation NCA (distance)
+        # if (dist_type!="NA") {
         # cl = la0
         # if (!"NCA"%in%names(fm[[colnam]][[dindname]][[cltype]][[par]]) | overwritef) {
         # if (length(unique(cl))==1) { nca = NA
@@ -149,17 +146,17 @@ score_list = foreach(dist_type=names(dist_paths)) %dopar% {
         # }
         # fm[[colnam]][[dindname]][[cltype]][[par]]["NCA"] = nca
         # }
-      # }
+        # }
+        
+        scores[[dist_type]] = score
+        
+      }
       
-      scores[[dist_type]] = score
+      
     }
     
-    
-    
-    
-    
+    if (dist_paths[[dist_type]]=="NA") return (scores)
 
-    
     for (clust_path in dist_paths[[dist_type]]) {
       
       cat("\n", clust_path, " ",sep="")
@@ -242,7 +239,7 @@ score_list = foreach(dist_type=names(dist_paths)) %dopar% {
       
       
       
-      if (length(unique(rowclust[rowclust>0]))<2) return(T)
+      if (length(unique(rowclust[rowclust>0]))<2) next()
       
       rowclust_df = matrix(rep(1,length(rowclust)),ncol=1)
       rownames(rowclust_df) = names(rowclust)
@@ -278,22 +275,25 @@ score_list = foreach(dist_type=names(dist_paths)) %dopar% {
       if (cmethod%in%cmethodclass) {
         F1 = F.measure.single.over.classes(rowlabel_df,rowclust_df)$average[-6]
         names(F1) = paste0(names(F1),"_1")
+        r1 = adjustedRand(rowlabel,rowclust); 
+        names(r1) = paste0(names(r1), "_1")
         score = append(score, F1)
-      } else {
-        # f11c = f.measure.comembership(rowlabel,rowclust); names(f11c) = paste0(names(f11c), "_co_1")
-        r1 = adjustedRand(rowlabel,rowclust); names(r1) = paste0(names(r1), "_1")
         score = append(score, r1)
+      } else {
+        f11c = f.measure.comembership(rowlabel,rowclust); 
+        names(f11c) = paste0(names(f11c), "_co_1")
+        score = append(score, f11c)
         # score = c(score, f11c, r1)
       }
       
       
       ## external validation f1 (clustering)
-      if (!cmethod%in%cmethodclass) {
-        f1c = f.measure.comembership(rowlabel_df,rowclust_df); names(f1c) = paste0(names(f1c), "_co")
-        # r = adjustedRand(rowlabel,rowclust)
-        # score = c(score,f1c,r)
-        score = append(score,unlist(f1c))
-      }
+      # if (!cmethod%in%cmethodclass) {
+      #   f1c = f.measure.comembership(rowlabel_df,rowclust_df); names(f1c) = paste0(names(f1c), "_co")
+      #   # r = adjustedRand(rowlabel,rowclust)
+      #   # score = c(score,f1c,r)
+      #   score = append(score,unlist(f1c))
+      # }
       
       
       
@@ -341,8 +341,49 @@ score_list = foreach(dist_type=names(dist_paths)) %dopar% {
       # fm[[colnam]][[dindname]][[cltype]][[par]] = append(fm[[colnam]][[dindname]][[cltype]][[par]], score)
       
       
+      #get dist matrix between genes
+      if (grepl("IMPC",root)) {
+        for (netdisti in names(netdists)) {
+          netdist = netdists[[netdisti]]
+          netgenes = colnames(netdist)
+          evalgenes = intersect(rowgene, netgenes)
+          
+          rowgene1 = rowgene[rowgene%in%evalgenes]
+          rowclust1 = rowclust[match(names(rowgene1),names(rowclust))]
+          rowclust1 = rowclust1[rowclust1>0]
+          if (length(rowclust1)==0) next
+          if (length(unique(rowclust1))==1) next
+          rowgene1 = rowgene1[match(names(rowclust1),names(rowgene1))]
+          
+          rowclust1_df = model.matrix(~ factor(rowclust1) - 1); colnames(rowclust1_df) = sort(unique(rowclust1)); rownames(rowclust1_df) = names(rowclust1)
+          netdist_rowcol = match((rowgene1),netgenes)
+          netdist1 = netdist[netdist_rowcol,netdist_rowcol]
+          netdist1 = apply(as.matrix(netdist1), 2, as.numeric)
+          rownames(netdist1) = colnames(netdist1) = names(rowgene1)
+          
+          #metrics
+          nca = NCA_score(netdist1, rowclust1)$p
+          names(nca) = paste0("NCA_net-",netdisti,".g-",length(unique(rowgene1)))
+          score = append(score,nca)
+          
+          silhouette = silhouette(rowclust1,netdist1)
+          pngame = paste0(biclust_plot_dir,"/",fileNames(clust_path),"_silhouette.net-",netdisti,".g-",length(unique(rowgene1)),".png")
+          png(pngame)
+          plot(silhouette)
+          graphics.off()
+          sil = median(silhouette[,3])
+          names(sil) = paste0("median-silhouette_net-",netdisti,".g-",length(unique(rowgene1)))
+          score = append(score,sil)
+          
+          names(rowgene1) = "no_genes"
+          
+          score = append(score, length(unique(rowgene1)))
+        }
+      }
       
-      scores[[clust_path]] = score
+      
+      
+      scores[[clust_path]] = unlist(score)
       
       # write.csv(score,file=paste0(biclust_score_dir, "/", clust_path, "_score.csv"))
       TimeOutput(start2)
@@ -353,8 +394,8 @@ score_list = foreach(dist_type=names(dist_paths)) %dopar% {
   
 }
 
-score_list = unlist(score_list, recursive=F)
-save(clust_files_table_final, file = paste0(clust_score_dir,".Rdata"))
+score_list = unlist(score_list0, recursive=F)
+save(score_list, file = paste0(clust_score_dir,".Rdata"))
 
 
 
@@ -373,14 +414,33 @@ save(clust_files_table_final, file = paste0(clust_score_dir,".Rdata"))
 
 ## put scores into a table
 error_ind = is.na(score_list)
-score_table = Reduce("rbind",score_list[!error_ind])
+score_names = Reduce("union",lapply(score_list, names))
+score_list = lapply(score_list[!error_ind], function(x) {
+  y = x[match(score_names,names(x))]
+  names(y) = score_names
+  return(y)
+})
+score_table = Reduce("rbind",score_list)
+colnames(score_table) = score_names
 
-clust_files = fileNames(clust_paths[!error_ind])
+clust_files = fileNames(names(score_list))
+clust_files = gsub("[.]csv|[.]Rdata","",clust_files)
+clust_files = gsub("_rowclust","",clust_files)
+
 clust_files_attr = str_split(clust_files,"_")
-clust_files_table = t(sapply(clust_files_attr, function(x) 
-  c(x[1], gsub("layer","",x[2]), str_split(x[3],"-")[[1]][2], str_split(x[4],"-")[[1]][2], x[5], str_split(x[6],"-")[[1]][2])
-))
-colnames(clust_files_table) = c("feature","layer","count-thresh","dist","clust","splitby")
+clust_files_list1 = lapply(clust_files_attr, function(x) {
+  metav = append(x[1], sapply(x[2:length(x)], function(y) str_split(y,"-")[[1]][2]))
+  names(metav) = append("feature", sapply(x[2:(length(x)-1)], function(y) str_split(y,"-")[[1]][1]))
+  return(metav)
+})
+clust_files_names = Reduce("union",lapply(clust_files_list1, names))
+clust_files_list = lapply(clust_files_list1, function(x) {
+  y = x[match(clust_files_names,names(x))]
+  names(y) = clust_files_names
+  return(y)
+})
+clust_files_table = Reduce("rbind",clust_files_list)
+colnames(clust_files_table) = clust_files_names
 
 clust_files_table_final = cbind(clust_files_table, score_table)
 write.csv(clust_files_table_final, file = paste0(clust_score_dir,".csv"))

@@ -147,8 +147,8 @@ for (feat_type in feat_types) {
         
         phenocodes = meta_cell$phenocode[match(colnames(m),meta_cell$phenotype)]
         
-        fname = paste0(feat_dir,"/",feat_type,".RCHY.dir.k",str_pad(kpaths, 2, pad = "0"),"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres)
-        fname0 = paste0(feat_dir,"/",feat_type,".RCHY.all.k",str_pad(kpaths, 2, pad = "0"),"_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres)
+        fname = paste0(feat_dir,"/",feat_type,".RCHY.dir.k",str_pad(kpaths, 2, pad = "0"),"_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres)
+        fname0 = paste0(feat_dir,"/",feat_type,".RCHY.all.k",str_pad(kpaths, 2, pad = "0"),"_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres)
         
         a = foreach(ii=1:nrow(m)) %dopar% {
           sample = rownames(m)[ii]

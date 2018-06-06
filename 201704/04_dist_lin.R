@@ -147,8 +147,8 @@ for (ci in 1:length(paste0(panelL,centreL))) {
     
     # Calculate distance (normalize by cell population) --------------------------------------------------------
     
-    if (doneAll) dname = paste(dist_dir[ci], "/linear_", paste0(matrix_type.,"-",matrix_weights, collapse="_"), "_FULL_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep="")
-    dname = paste(dist_dir[ci], "/linear_", paste0(matrix_type.,"-",matrix_weights, collapse="_"), "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
+    if (doneAll) dname = paste(dist_dir[ci], "/linear_", paste0(matrix_type.,"-",matrix_weights, collapse="_"), "_FULL_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep="")
+    dname = paste(dist_dir[ci], "/linear_", paste0(matrix_type.,"-",matrix_weights, collapse="_"), "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
     if (file.exists(dname)) { cat(" exists, skipped."); next }
     
     #weigh each feature matrix; scalendev = 0 (uhh...), T (scaling is done by dividing the centred columns by their SD), F (none)

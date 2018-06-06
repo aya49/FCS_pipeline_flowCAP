@@ -29,7 +29,7 @@ libr("doMC")
 libr("stringr")
 
 #Setup Cores
-no_cores = 15#detectCores()-3
+no_cores = 10#detectCores()-3
 registerDoMC(no_cores)
 
 

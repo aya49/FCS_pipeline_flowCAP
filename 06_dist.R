@@ -30,7 +30,7 @@ libr("kernlab")
 
 
 #Setup Cores
-no_cores = detectCores()-1
+no_cores = 14#detectCores()-1
 registerDoMC(no_cores)
 
 
@@ -135,7 +135,7 @@ a = foreach(feat_type=feat_types) %dopar% {
     ## does feature matrix have cell populations on column names?
     layers = 0
     countThres = 0
-    colhaslayer = ifelse(!grepl("_layer",feat_type),T,F)
+    colhaslayer = ifelse(!grepl("_layer-",feat_type),T,F)
     colhascell = ifelse(str_split(feat_type,"-")[[1]][2]=="cell",T,F)
     if (colhascell) {
       layers = c(1,2,4,max(unique(sapply(unlist(str_split(colnames(m0),"_")), function(x) str_count(x,"[+-]")))))
@@ -159,7 +159,7 @@ a = foreach(feat_type=feat_types) %dopar% {
         cat(", ", length(dis)-i+1, ":", dis[i], " ", sep="")
         
         #assume after splitting dist filename by "_", distance is second element
-        dname = paste0(dist_dir, "/",feat_type, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_dist-",dis[i],".Rdata")
+        dname = paste0(dist_dir, "/",feat_type, "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_dist-",dis[i],".Rdata")
         
         ## calculate distances
         # if (is.null(dim(m))) { #edge feature

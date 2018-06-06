@@ -30,7 +30,7 @@ libr("doMC")
 libr("stringr")
 
 #Setup Cores
-no_cores = 15#detectCores()-3
+no_cores = 10#detectCores()-3
 registerDoMC(no_cores)
 
 
@@ -147,8 +147,8 @@ a = foreach(feat_type=feat_types) %dopar% {
     ## does feature matrix have cell populations on column names?
     layers = 0
     countThres = 0
-    colhaslayer = ifelse(!grepl("_layer",feat_type),T,F)
-    colhascell = ifelse(str_split(feat_type,"-")[[1]][2]=="cell",T,F)
+    colhaslayer = grepl("_layer-",feat_type)
+    colhascell = str_split(feat_type,"-")[[1]][2]=="cell"
     if (colhascell) {
       layers = c(1,2,4,max(unique(sapply(unlist(str_split(colnames(m0),"_")[[1]]), function(x) str_count(x,"[+-]")))))
       countThres = cellCountThres
@@ -197,7 +197,7 @@ a = foreach(feat_type=feat_types) %dopar% {
           if (colhaslayer) {
             dname0 = paste0("/",feat_type, "_dist-NADIST", sep = "")
           } else {
-            dname0 = paste("/",feat_type, "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_dist-NADIST")
+            dname0 = paste("/",feat_type, "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_dist-NADIST")
           }
           dname = paste0(dist_dir,dname0)
           

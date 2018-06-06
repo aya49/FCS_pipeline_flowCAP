@@ -16,7 +16,7 @@ meta_train_dir = paste0("attachments/AMLTraining.csv") #which FCM files are test
 ## output directories
 dist_dir = paste(result_dir, "/dist", sep=""); dir.create(dist_dir, showWarnings=F)
 clust_dir = paste(result_dir, "/clust", sep=""); dir.create(clust_dir, showWarnings=F)
-clust_source_dir = paste0(clust_dir,"/source"); dir.create(clust_source_dir, showWarnings=F)
+clust_source_dir = paste0(clust_dir,"/clust_source"); dir.create(clust_source_dir, showWarnings=F)
 
 ## libraries
 source("~/projects/IMPC/code/_funcAlice.R")
@@ -31,7 +31,7 @@ libr("doMC")
 libr("stringr")
 
 #Setup Cores
-no_cores = 15#detectCores()-3
+no_cores = 10#detectCores()-3
 registerDoMC(no_cores)
 
 

@@ -92,7 +92,7 @@ for (mcp in 1:length(matrixPval_dir)) { # Load & fix cell count/countAdj/proport
             # rownames(tsnem$Y) = sampleMeta$gene
             # palette = choose_palette(pal=rainbow_hcl, n=length(unique(sampleMeta$gene)))
             
-            pngname = paste(dist_dir, "/", dis[i], "_layer", str_pad(k, 2, pad = "0"), "_tsne",theta,"_", matrixPval_names, ".png", sep = "" )
+            pngname = paste(dist_dir, "/", dis[i], "_layer-", str_pad(k, 2, pad = "0"), "_tsne",theta,"_", matrixPval_names, ".png", sep = "" )
             width = 700; height = 700 # of each plot in png
             perplot = height/12 # legend items per plot
             

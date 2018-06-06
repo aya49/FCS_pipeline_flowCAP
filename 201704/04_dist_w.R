@@ -131,8 +131,8 @@ for (mcp in matrix_type) {
       if (is.null(m) | !length(m)>0) next
       mw[mw<1]=1; mwl = exp(log(mw,getlv(max(mw),100)))/100
       
-      if (doneAll) dname = paste(dist_dir, "/", mcp, "_manhattan_FULL_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep="")
-      dname = paste(dist_dir, "/", mcp, "_manhattan_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
+      if (doneAll) dname = paste(dist_dir, "/", mcp, "_manhattan_FULL_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep="")
+      dname = paste(dist_dir, "/", mcp, "_manhattan_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
       if (file.exists(paste0(gsub("FULL_","",dname),"_weighted.Rdata")) & !overwrite) { cat(" exists, skipped."); next }
       
       

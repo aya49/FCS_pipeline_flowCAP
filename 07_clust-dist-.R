@@ -404,7 +404,7 @@ if (recalcNCA) {
     } else { k0=c(1,4,7) }
     #get to-delete high no of marker phenotypes
     for (k in k0) { cat(" level",k," ",sep="")
-      dnamee = paste(dist_kern_dir, "/", mcp, "_rbf_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-none",sep="")
+      dnamee = paste(dist_kern_dir, "/", mcp, "_rbf_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-none",sep="")
       dname = paste(dnamee,"_interested-", sep = "" )
       
       mmlresult = trimMatrices(mml0,m0,pt,gt,phenoMeta,NULL,F, countThres,k)

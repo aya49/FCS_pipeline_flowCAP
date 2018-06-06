@@ -41,9 +41,10 @@ options(stringsAsFactors=FALSE)
 # options(device="cairo")
 options(na.rm=T)
 
-overwrite = F
+overwrite = T
 writecsv = F
 
+layer_start = 3 #e.g. if layers=3, get paths for root till layer ...,7,6,5,4,3
 cellCountThres = c(200) #(needed if sample x cell pop matrices are used) insignificant if count under
 good_sample = c(3)
 good_count = c(3)
@@ -100,11 +101,10 @@ for (feat_type in feat_types) {
     
     ## does feature matrix have cell populations on column names?
     layers = 0
-    countThres = 0
+    countThres = cellCountThres
     colhascell = ifelse(str_split(feat_type,"-")[[1]][2]=="cell",T,F)
     if (colhascell) {
-      layers = c(1,2,4,max(unique(sapply(unlist(str_split(colnames(m0),"_")[[1]]), function(x) str_count(x,"[+-]")))))
-      countThres = cellCountThres
+      layers = c(layer_start,max(unique(sapply(unlist(str_split(colnames(m0),"_")[[1]]), function(x) str_count(x,"[+-]")))))
     }
     
     #get matrix colnames/rownames (sample/celltype features)
@@ -226,6 +226,8 @@ for (feat_type in feat_types) {
         paths = append(paths, paste(walks[indof0[length(indof0)]:length(walks)],collapse="_"))
         path_tally = table(paths)
         save(path_tally, file=pname); rm(path_tally)
+      } else {
+        path_tally = get(load(pname))
       }
       
       if (overwrite | !file.exists(lname)) {
@@ -276,6 +278,8 @@ for (feat_type in feat_types) {
         # random_paths_all_files[[mf[i,id_col]]] = path_tally
         
         save(edge_tally, file=lname)
+      } else {
+        edge_tally = get(load(lname))
       }
       # return(list(edge_tally=edge_tally))#, path_tally=path_tally))
     }

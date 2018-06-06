@@ -141,8 +141,8 @@ a = foreach(mcp=matrix_type) %dopar% {
           normalize = c("none","cellpop", "layer") # by none (for child matrices only), cell pop, layer
           
           #assume after splitting dist filename by "_", distance is second element
-          if (doneAll) dname = paste(dist_dir, "/", mcp, "_", dis[i], "_FULL_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-", sep="")
-          dname = paste(dist_dir, "/", mcp, "_", dis[i], "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-", sep = "" )
+          if (doneAll) dname = paste(dist_dir, "/", mcp, "_", dis[i], "_FULL_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-", sep="")
+          dname = paste(dist_dir, "/", mcp, "_", dis[i], "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-", sep = "" )
           
           
           

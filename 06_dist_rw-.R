@@ -183,7 +183,7 @@ for (feat_type_path in feat_type_paths) {
     
     start2 = Sys.time()
     
-    dname = paste0(dist_dir,"/",feat_type_path, "_layer", str_pad(0, 2, pad = "0"), "_countThres-", 200,
+    dname = paste0(dist_dir,"/",feat_type_path, "_layer-", str_pad(0, 2, pad = "0"), "_countThres-", 200,
                    "_dist-jaccardmin")
     dir.create(dname, showWarnings=F)
     

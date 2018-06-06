@@ -146,8 +146,8 @@ for (mcp in matrix_type) {
       
       # Calculate distance (normalize by cell population) --------------------------------------------------------
       
-      if (doneAll) dname = paste(dist_dir, "/overlap_", paste0(matrix_type,"-",weight_matrix, collapse="_"), "_FULL_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, sep="")
-      dname = paste(dist_dir, "/overlap_", paste0(matrix_type,"-",weight_matrix, collapse="_"), "_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, sep = "" )
+      if (doneAll) dname = paste(dist_dir, "/overlap_", paste0(matrix_type,"-",weight_matrix, collapse="_"), "_FULL_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, sep="")
+      dname = paste(dist_dir, "/overlap_", paste0(matrix_type,"-",weight_matrix, collapse="_"), "_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, sep = "" )
       if (file.exists(dname)) { cat(" exists, skipped."); next }
       d = matrix(0,nrow=nrow(m),ncol=nrow(m))
       dsim = matrix(Inf,nrow=nrow(m),ncol=nrow(m))

@@ -143,7 +143,7 @@ for (mcp in matrix_type) {
       } else { if (length(mml)>0) m = mml[[1]] }
       if (is.null(m) | !length(m)>0) next
       
-      dname = paste(dist_dir, "/", mcp, "_manhattan_layer", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
+      dname = paste(dist_dir, "/", mcp, "_manhattan_layer-", str_pad(k, 2, pad = "0"), "_countThres-", countThres, "_normalize-cellpop", sep = "" )
 
       for (weighting in weightings) {
         
