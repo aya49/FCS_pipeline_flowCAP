@@ -207,7 +207,6 @@ a = foreach(feat_type=feat_types) %dopar% {
           ## desnitycut clustering
           if (cmethod=="dc") {
             clt = DensityCut(X=m, alpha=alpha, nu=nu, show.plot=F)$cluster
-            write.csv(clt, file=cname)
           }
           
           ## spectral clustering and rbf kernel parameter learning
@@ -221,8 +220,7 @@ a = foreach(feat_type=feat_types) %dopar% {
             
             if (is.null(sp)) next()
             clt = sp@.Data
-            write.csv(clt, file=cname)
-            
+
             ## calculate rbf distance
             parlist0 = unlist(sp@kernelf@kpar)
             simrbf = kernelMatrix(kernel=rbfdot(as.numeric(parlist0)), x=m)
@@ -230,6 +228,9 @@ a = foreach(feat_type=feat_types) %dopar% {
             save(drbf, file=paste0(dname1,".Rdata"))
             
           }
+          names(clt) = rownames(m)
+          write.csv(clt, file=cname)
+          
         }
         
         

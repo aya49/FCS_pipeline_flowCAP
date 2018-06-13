@@ -41,7 +41,7 @@ options(stringsAsFactors=FALSE)
 # options(device="cairo")
 options(na.rm=T)
 
-overwrite = F
+overwrite = T
 writecsv = T
 
 minwalks = 5 #if number of walks on a path is less than minwalks, set to 0
@@ -55,7 +55,7 @@ order_cols = c("aml","tube")
 split_col = "tube"
 
 #data paths
-feat_type_paths = list.dirs(path=feat_dir, full.names=F)
+feat_type_paths = list.files(path=feat_dir, full.names=F, pattern=".Rdata")
 feat_type_paths = feat_type_paths[grepl("path-rw",feat_type_paths)]
 
 feat_count = c("file-cell-countAdj") #(needed if sample x cell pop matrices are used) count matrix, to get rid of low cell count cells
@@ -94,8 +94,8 @@ for (feat_type_path in feat_type_paths) {
     cat("\n", feat_type_path, " ",sep="")
     start2 = Sys.time()
     
-    feat_type_path_files = list.files(path=paste0(feat_dir,"/",feat_type_path), full.names=F)
-    feat_type_path_filenames = gsub(".Rdata","",feat_type_path_files)
+    # feat_type_path_files = list.files(path=paste0(feat_dir,"/",feat_type_path), full.names=F)
+    # feat_type_path_filenames = gsub(".Rdata","",feat_type_path_files)
     
     #load feature matrix
     # mp = random_paths_all_files = foreach(x=feat_type_path_files) %dopar% { 
@@ -110,67 +110,11 @@ for (feat_type_path in feat_type_paths) {
     #   get(load(paste0(feat_dir,"/",feat_type_path,"/",x))) ) #30sec for flowcap
     # TimeOutput(start1)
     
-    if (file.exists(paste0(feat_dir,"/",feat_type_path,".Rdata"))) {
-      mp2 = get(load(paste0(feat_dir,"/",feat_type_path,".Rdata")))
-    } else {
-      
-      start1 = Sys.time()
-      mp0 = foreach(x=feat_type_path_files) %dopar% {
-        # data.frame(as.list(get(load(paste0(feat_dir,"/",feat_type_path,"/",x))))) ) #30sec for flowcap
-        return( get(load(paste0(feat_dir,"/",feat_type_path,"/",x))) ) } #30sec for flowcap
-      TimeOutput(start1)
-      
-      # start1 = Sys.time()
-      # mp0 = foreach(x=feat_type_path_files) %dopar% {
-      #   return( data.frame(as.list(get(load(paste0(feat_dir,"/",feat_type_path,"/",x))))) ) #8 min 14 cores for flowcap
-      # }
-      # TimeOutput(start1)
-      
-      path_sum = sapply(mp0, function(x) sum(x))
-      
-      path_ratio = path_sum/min(path_sum)
-      mp = lapply(1:length(mp0), function(xi) mp0[[xi]]*path_ratio[xi])
-      if (minwalks>0) mp = lapply(mp, function(x) x[x>=minwalks])
-      
-      start1 = Sys.time()
-      path_names = lapply(mp0, function(x) names(x))
-      path_name = unique(unlist(path_names))
-      # path_order = lapply(path_names, function(x) match(path_name,path_names))
-      
-      # mp2 = Matrix(0,ncol=length(path_names),nrow=length(mp), 
-      #              dimnames=list(gsub(".Rdata","",feat_type_path_files),path_name), sparse=T)
-      
-      loop.inds = loopInd(1:length(mp),no_cores)
-      mp2 = foreach (ii = loop.inds, .combine=rbind) %dopar% {
-        mtemp = Matrix(0,nrow=length(ii),ncol=length(path_name),sparse=T)
-        for(i in 1:length(ii)) {
-          mpi = mp[[ii[i]]]
-          mpiorder = match(path_name,names(mpi))
-          mpi2 = mpi[mpiorder]
-          mpi2[is.na(mpiorder)] = 0
-          # mtempi = c.sparseVector(mpi2)
-          mtemp[i,] = c.sparseVector(mpi2)
-          # return(mtempi)
-        }
-        # mtemp = lapply(mtempt, as, "sparseMatrix")
-        # mtemp = Reduce(cbind, mtemp)
-        return(mtemp)
-      }
-      # mp1 = foreach(x=mp) %dopar% {data.frame(as.list(x))}
-      # mp2 = Reduce(rbind.fill, mp1)
-      # mp2[is.na(mp2)] = 0
-      # mp2 = Matrix(mp2, sparse=T)
-      
-      save(mp2, file=paste0(feat_dir,"/",feat_type_path,".Rdata"))
-      
-      TimeOutput(start1)
-      
-      # random_paths_all_files1 = Matrix(random_paths_all_files1,sparse=T)
-      # rownames(random_paths_all_files1) = feat_type_path_files
-      # colnames(random_paths_all_files1) = path_names
-      # mp = random_paths_all_files1
-      
-    }
+    if (!file.exists(paste0(feat_dir,"/",feat_type_path,".Rdata"))) next()
+    mp2 = get(load(paste0(feat_dir,"/",feat_type_path,".Rdata")))
+    
+    feat_type_path_files = row.names(mp2)
+    feat_type_path_filenames = gsub(".Rdata","",feat_type_path_files)
     
     png(paste0(stat_dir,"/",feat_type_path,"_pathfreqdensity.png"), width=900, height=400)
     par(mfrow=c(1,2))
@@ -183,7 +127,7 @@ for (feat_type_path in feat_type_paths) {
     
     start2 = Sys.time()
     
-    dname = paste0(dist_dir,"/",feat_type_path, "_layer-", str_pad(0, 2, pad = "0"), "_countThres-", 200,
+    dname = paste0(dist_dir,"/",feat_type_path, #"_layer-", str_pad(0, 2, pad = "0"), "_countThres-", 200,
                    "_dist-jaccardmin")
     dir.create(dname, showWarnings=F)
     

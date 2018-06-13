@@ -114,13 +114,13 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
     
     ## upload and prep feature matrix
     d0 = NULL
-    if (dist_type!="NA") {
+    if (dist_type!="NA" & (overwrite | !file.exists(paste0(clust_score_dir, "/", dist_type, ".Rdata")))) {
       if (readcsv) {
         d0 = as.matrix(read.csv(paste0(dist_dir,"/", dist_type,".csv"),row.names=1, check.names=F))
       } else {
         d0 = as.matrix(get(load(paste0(dist_dir,"/", dist_type,".Rdata"))))
       }
-    
+      
       if (!rownames(d0)[1]%in%meta_file[,id_col]) {
         cat("\nskipped: ",dist_type,", matrix rownames must match fileName column in meta_file","\n", sep="")
       } else {
@@ -147,17 +147,20 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
         # fm[[colnam]][[dindname]][[cltype]][[par]]["NCA"] = nca
         # }
         # }
-        
+        score = unlist(score)
         scores[[dist_type]] = score
         
+        save(score,file=paste0(clust_score_dir, "/", dist_type, ".Rdata"))
       }
       
       
     }
     
-    if (dist_paths[[dist_type]]=="NA") return (scores)
-
+    if (dist_paths[[dist_type]]=="NA") return(scores)
+    
     for (clust_path in dist_paths[[dist_type]]) {
+      clust_path_ = gsub("_rowclust.csv","",fileName(clust_path))
+      if (!overwrite & !file.exists(paste0(clust_score_dir, "/", clust_path_, ".Rdata"))) next()
       
       cat("\n", clust_path, " ",sep="")
       start2 = Sys.time()
@@ -181,7 +184,7 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
       rowlabel = meta_file[match(names(rowclust),meta_file[,id_col]),target_col]
       names(rowlabel) = names(rowclust)
       
-
+      
       # ## make an adjusted version of clustering, such that they match with actual labels
       # clt = rowclust
       # # for (j in 1:ncol(clt)) {
@@ -249,7 +252,7 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
       # colnames(rowclust1_df) = sort(unique(rowclust1)); 
       # rownames(rowclust1_df) = names(rowclust1)
       
-      rowlabel_df = model.matrix(~ factor(rowlabel) - 1)
+      rowlabel_df = model.matrix(~rowlabel)
       colnames(rowlabel_df) = laname = sort(unique(rowlabel))
       rownames(rowlabel_df) = names(rowlabel)
       
@@ -343,13 +346,15 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
       
       #get dist matrix between genes
       if (grepl("IMPC",root)) {
+        rowgene = meta_file[match(names(rowclust),meta_file[,id_col]),gene_col]
+        names(rowgene) = names(rowclust)
         for (netdisti in names(netdists)) {
           netdist = netdists[[netdisti]]
           netgenes = colnames(netdist)
           evalgenes = intersect(rowgene, netgenes)
           
           rowgene1 = rowgene[rowgene%in%evalgenes]
-          rowclust1 = rowclust[match(names(rowgene1),names(rowclust))]
+          rowclust1 = rowclust[match(names(rowgene1),names(rowgene))]
           rowclust1 = rowclust1[rowclust1>0]
           if (length(rowclust1)==0) next
           if (length(unique(rowclust1))==1) next
@@ -364,7 +369,8 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
           #metrics
           nca = NCA_score(netdist1, rowclust1)$p
           names(nca) = paste0("NCA_net-",netdisti,".g-",length(unique(rowgene1)))
-          score = append(score,nca)
+          no_genes=length(evalgenes)
+          score = append(score,no_genes,nca)
           
           silhouette = silhouette(rowclust1,netdist1)
           pngame = paste0(biclust_plot_dir,"/",fileNames(clust_path),"_silhouette.net-",netdisti,".g-",length(unique(rowgene1)),".png")
@@ -374,18 +380,14 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
           sil = median(silhouette[,3])
           names(sil) = paste0("median-silhouette_net-",netdisti,".g-",length(unique(rowgene1)))
           score = append(score,sil)
-          
-          names(rowgene1) = "no_genes"
-          
-          score = append(score, length(unique(rowgene1)))
         }
       }
       
       
+      score = unlist(score)
+      scores[[clust_path]] = score
       
-      scores[[clust_path]] = unlist(score)
-      
-      # write.csv(score,file=paste0(biclust_score_dir, "/", clust_path, "_score.csv"))
+      save(score,file=paste0(clust_score_dir, "/", clust_path_, ".Rdata"))
       TimeOutput(start2)
       
     }
@@ -394,8 +396,10 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
   
 }
 
-score_list = unlist(score_list0, recursive=F)
-save(score_list, file = paste0(clust_score_dir,".Rdata"))
+# score_list = unlist(score_list0, recursive=F)
+# save(score_list, file = paste0(clust_score_dir,".Rdata"))
+
+TimeOutput(start)
 
 
 
@@ -409,12 +413,11 @@ save(score_list, file = paste0(clust_score_dir,".Rdata"))
 
 
 
-
-
+score_list = lapply(list.files(clust_score_dir,full.names=T), function(x) get(load(x)))
 
 ## put scores into a table
 error_ind = is.na(score_list)
-score_names = Reduce("union",lapply(score_list, names))
+score_names = unique(unlist(lapply(score_list, names)))
 score_list = lapply(score_list[!error_ind], function(x) {
   y = x[match(score_names,names(x))]
   names(y) = score_names
@@ -429,7 +432,7 @@ clust_files = gsub("_rowclust","",clust_files)
 
 clust_files_attr = str_split(clust_files,"_")
 clust_files_list1 = lapply(clust_files_attr, function(x) {
-  metav = append(x[1], sapply(x[2:length(x)], function(y) str_split(y,"-")[[1]][2]))
+  metav = append(x[1], sapply(x[2:(length(x)-1)], function(y) str_split(y,"-")[[1]][2]))
   names(metav) = append("feature", sapply(x[2:(length(x)-1)], function(y) str_split(y,"-")[[1]][1]))
   return(metav)
 })
@@ -447,6 +450,7 @@ write.csv(clust_files_table_final, file = paste0(clust_score_dir,".csv"))
 
 
 TimeOutput(start)
+
 
 
 
