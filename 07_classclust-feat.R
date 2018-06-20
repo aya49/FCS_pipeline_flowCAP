@@ -30,7 +30,7 @@ libr("doMC")
 libr("stringr")
 
 #Setup Cores
-no_cores = 10#detectCores()-3
+no_cores = 14#detectCores()-3
 registerDoMC(no_cores)
 
 
@@ -69,7 +69,7 @@ readcsv = F
 cellCountThres = c(1200)
 
 readcsv = F #read features as csv or Rdata
-overwrite = F #overwrite clustering?
+overwrite = T #overwrite clustering?
 
 good_count = 3 #trim matrix; only keep col/rows that meet criteria for more than 3 elements
 good_sample = 3 #trim matrix; only keep rows that are a part of a class with more than 3 samples

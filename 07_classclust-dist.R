@@ -70,7 +70,7 @@ readcsv = F
 cellCountThres = c(1200)
 
 readcsv = F #read features as csv or Rdata
-overwrite = F #overwrite clustering?
+overwrite = T #overwrite clustering?
 
 good_count = 3 #trim matrix; only keep col/rows that meet criteria for more than 3 elements
 good_sample = 3 #trim matrix; only keep rows that are a part of a class with more than 3 samples
@@ -98,6 +98,7 @@ feat_count = "file-cell-countAdj" # cell count features used to trim matrix
 dist_types = list.files(dist_dir, recursive=F, full.names=F, pattern=".Rdata")
 dist_types = gsub(".Rdata","",dist_types)
 
+dist_types = dist_types[grepl("rw",dist_types)]
 
 
 

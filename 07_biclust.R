@@ -47,7 +47,7 @@ options(stringsAsFactors=FALSE)
 options(na.rm=T)
 
 readcsv = F #read features as csv or Rdata
-overwrite = F #overwrite biclust?
+overwrite = T #overwrite biclust?
 # writecsv = F
 
 good_count = 1 #trim matrix; only keep col/rows that meet criteria for more than 3 elements
@@ -80,6 +80,8 @@ if (readcsv) {
   feat_types = list.files(path=feat_dir,pattern=".Rdata")
   feat_types = gsub(".Rdata","",feat_types)
 }
+feat_types = feat_types[grepl("rw",feat_types)]
+
 feat_count = "file-cell-countAdj" # cell count features used to trim matrix
 #feat_types = list.files(path=result_dir,pattern=glob2rx("matrix*.Rdata"))
 

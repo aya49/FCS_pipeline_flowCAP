@@ -43,7 +43,7 @@ registerDoMC(no_cores)
 
 ## options for script
 readcsv = F
-
+overwrite = T
 attributes = c("aml")
 
 control = "normal" #control value in target_col column for each centre
@@ -159,8 +159,8 @@ score_list0 = foreach(dist_type=names(dist_paths)) %dopar% {
     if (dist_paths[[dist_type]]=="NA") return(scores)
     
     for (clust_path in dist_paths[[dist_type]]) {
-      clust_path_ = gsub("_rowclust.csv","",fileName(clust_path))
-      if (!overwrite & !file.exists(paste0(clust_score_dir, "/", clust_path_, ".Rdata"))) next()
+      clust_path_ = gsub("_rowclust.csv","",fileNames(clust_path))
+      if (!overwrite & file.exists(paste0(clust_score_dir, "/", clust_path_, ".Rdata"))) next()
       
       cat("\n", clust_path, " ",sep="")
       start2 = Sys.time()
@@ -412,8 +412,9 @@ TimeOutput(start)
 
 
 
-
-score_list = lapply(list.files(clust_score_dir,full.names=T), function(x) get(load(x)))
+score_files = list.files(clust_score_dir,full.names=T)
+score_list = lapply(score_files, function(x) get(load(x)))
+names(score_list) = score_files
 
 ## put scores into a table
 error_ind = is.na(score_list)

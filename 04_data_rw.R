@@ -134,7 +134,7 @@ for (feat_type in feat_types) {
     # file name & check if overwrite
     ename = paste0(feat_dir, "/file-edge-rw.", feat_type[1]); dir.create(ename, showWarnings=F)
     dname = paste0(feat_dir, "/file-path-rw.", feat_type[1]); dir.create(dname, showWarnings=F)
-    if (overwrite & 
+    if (overwrite | 
         !(all(sapply(paste0(ename,"/",rownames(m),".Rdata"), function(x) file.exists(x))) &
           all(sapply(paste0(dname,"/",rownames(m),".Rdata"), function(x) file.exists(x))) )) {
       
